@@ -1,0 +1,114 @@
+<div class="container">
+  <header class="header">
+    <h1>{{ title }}</h1>
+    <div class="connection-status">
+      <span [class]="isConnected ? 'connected' : 'disconnected'">
+        {{ isConnected ? '✅ Conectado' : '❌ Desconectado' }}
+      </span>
+    </div>
+  </header>
+
+  <!-- Mensaje de estado -->
+  <div *ngIf="message" class="message">
+    {{ message }}
+  </div>
+
+  <!-- Formulario para crear usuario -->
+   <section class="form-section">
+     <h2>Crear Nuevo Usuario</h2>
+     <form (ngSubmit)="createUser()" class="user-form">
+       <div class="form-group">
+         <label for="nombreCompleto">Nombre Completo:</label>
+         <input 
+           type="text" 
+           id="nombreCompleto"
+           [(ngModel)]="newUser.nombreCompleto" 
+           name="nombreCompleto"
+           placeholder="Ingresa el nombre completo"
+           required>
+       </div>
+
+       <div class="form-group">
+         <label for="email">Email:</label>
+         <input 
+           type="email" 
+           id="email"
+           [(ngModel)]="newUser.email" 
+           name="email"
+           placeholder="Ingresa el email"
+           required>
+       </div>
+
+       <div class="form-group">
+         <label for="edad">Edad:</label>
+         <input 
+           type="number" 
+           id="edad"
+           [(ngModel)]="newUser.edad" 
+           name="edad"
+           placeholder="Ingresa la edad"
+           min="0"
+           max="120">
+       </div>
+
+       <div class="form-group">
+         <label class="checkbox-label">
+           <input 
+             type="checkbox" 
+             [(ngModel)]="newUser.activo" 
+             name="activo">
+           Usuario activo
+         </label>
+       </div>
+
+       <button type="submit" [disabled]="loading" class="btn-primary">
+         {{ loading ? 'Creando...' : 'Crear Usuario' }}
+       </button>
+     </form>
+   </section>
+
+   <!-- Lista de usuarios -->
+   <section class="users-section">
+     <h2>Lista de Usuarios ({{ users.length }})</h2>
+     
+     <div *ngIf="loading && users.length === 0" class="loading">
+       Cargando usuarios...
+     </div>
+
+     <div *ngIf="users.length === 0 && !loading" class="no-users">
+       No hay usuarios registrados
+     </div>
+
+     <div class="users-grid">
+       <div *ngFor="let user of users" class="user-card" [class.inactive]="!user.activo">
+         <div class="user-header">
+           <h3>{{ user.nombreCompleto }}</h3>
+           <span class="status-badge" [class.active]="user.activo" [class.inactive]="!user.activo">
+             {{ user.activo ? 'Activo' : 'Inactivo' }}
+           </span>
+         </div>
+         
+         <div class="user-details">
+           <p><strong>Email:</strong> {{ user.email }}</p>
+           <p *ngIf="user.edad"><strong>Edad:</strong> {{ user.edad }} años</p>
+           <p *ngIf="user.fechaCreacion"><strong>Fecha Creación:</strong> {{ user.fechaCreacion }}</p>
+           <p><strong>Registrado:</strong> {{ user.createdAt | date:'short' }}</p>
+         </div>
+         
+         <div class="user-actions">
+           <button 
+             (click)="toggleUserStatus(user)" 
+             [class]="user.activo ? 'btn-warning' : 'btn-success'">
+             {{ user.activo ? 'Desactivar' : 'Activar' }}
+           </button>
+           
+           <button 
+             (click)="deleteUser(user._id!)" 
+             class="btn-danger">
+             Eliminar
+           </button>
+         </div>
+       </div>
+     </div>
+   </section>
+</div>

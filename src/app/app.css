@@ -1,0 +1,104 @@
+.container {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+.connection-section {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.connected { color: green; }
+.disconnected { color: red; }
+
+.form-section {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 5px;
+  margin-bottom: 20px;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background: #0056b3;
+}
+
+.users-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 15px;
+}
+
+.user-card {
+  border: 1px solid #ddd;
+  padding: 15px;
+  border-radius: 5px;
+  background: white;
+}
+
+.user-card h3 {
+  margin: 0 0 10px 0;
+  color: #333;
+}
+
+.user-card p {
+  margin: 5px 0;
+  color: #666;
+}
+
+.btn-danger, .btn-warning, .btn-success {
+  padding: 5px 10px;
+  border: none;
+  border-radius: 3px;
+  cursor: pointer;
+  margin: 2px;
+}
+
+.btn-danger { background: #dc3545; color: white; }
+.btn-warning { background: #ffc107; color: black; }
+.btn-success { background: #28a745; color: white; }
+
+.status-badge {
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.status-badge.active { background: #d4edda; color: #155724; }
+.status-badge.inactive { background: #f8d7da; color: #721c24; }
