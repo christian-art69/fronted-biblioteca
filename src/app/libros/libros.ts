@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { LibroService } from '../libros/libro.service';
+import { LibroService } from '../libros/libros.service';
 import { ILibro, ICrearLibro } from '../interfaces/libro.interfaces';
 import { AuthService } from '../services/auth.service';
 

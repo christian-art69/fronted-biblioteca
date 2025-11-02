@@ -1,21 +1,21 @@
-// src/app/guards/login.guard.ts
+// src/app/guards/main.guard.ts
 import { inject } from '@angular/core';
 import { Router, CanActivateFn } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 import { map } from 'rxjs';
 
-export const loginGuard: CanActivateFn = (route, state) => {
+export const mainGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
   return authService.isLoggedIn$.pipe(
     map(isLoggedIn => {
-      if (!isLoggedIn) {
-        return true; // Si NO está logueado, puede ver el login
+      if (isLoggedIn) {
+        return true; // Si está logueado, puede pasar
       } else {
-        router.navigate(['/libros']); // Si YA está logueado, lo mandamos a /libros
+        router.navigate(['/login']); // Si no, lo redirige al login
         return false;
       }
     })
   );
-}
+};

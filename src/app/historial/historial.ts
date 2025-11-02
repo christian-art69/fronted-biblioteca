@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { PrestamoService } from '../prestamos/prestamo.service';
+import { PrestamoService } from '../prestamos/prestamos.service';
 import { AuthService } from '../services/auth.service';
 
 @Component({

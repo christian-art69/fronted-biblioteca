@@ -3,8 +3,8 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 import { AuthService } from '../services/auth.service';
-import { PrestamoService } from '../prestamos/prestamo.service';
-import { LibroService } from '../libros/libro.service';
+import { PrestamoService } from '../prestamos/prestamos.service';
+import { LibroService } from '../libros/libros.service';
 import { UsuarioService } from '../usuarios/usuario.service';
 
 import { IPrestamo, ICrearPrestamo } from '../interfaces/prestamo.interfaces';
