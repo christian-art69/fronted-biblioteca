@@ -1,3 +1,33 @@
+/* RECOMENDADO: Añadir variables de color globales */
+:root {
+  --color-primario: #F97316;
+  --color-fondo: #F97316;
+  --color-texto-principal: #FFFFFF;
+  --color-texto-secundario: #333333;
+  --color-superficie: #FFFFFF; /* Color de los paneles */
+  --color-borde: #ccc;
+  --color-borde-foco: #F97316;
+
+  --color-exito: #10B981;
+  --color-error: #EF4444;
+  --color-advertencia: #F59E0B;
+  --color-atrasado-texto: #efb344;
+  --color-bloqueado: #EF4444;
+  --color-activo: #3B82F6;
+  
+  --color-boton-principal: #1a1a1a;
+  --color-boton-principal-hover: #333;
+  --color-boton-secundario-hover: #e0e0e0;
+  
+  --color-fondo-tabla-header: #f7f7f7;
+  --color-fondo-tabla-hover: #f9f9f9;
+  --color-borde-tabla: #e0e0e0;
+
+  --sombra-panel: 0 8px 20px rgba(0, 0, 0, 0.15);
+  --radio-borde: 12px;
+  --radio-borde-input: 8px;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -7,6 +37,7 @@
 html, body {
   height: 100%;
   font-family: 'Poppins', 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-  background-color: #F97316; 
-  color: #FFFFFF;
+  /* Se usan las variables */
+  background-color: var(--color-fondo); 
+  color: var(--color-texto-principal);
 }

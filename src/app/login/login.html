@@ -1,6 +1,8 @@
 <div class="login-container">
-  <div class="login-card">
-    <h2>Iniciar Sesión</h2>
+  <article class="login-card">
+    <header>
+      <h2>Iniciar Sesión</h2>
+    </header>
     <form (ngSubmit)="login()">
       <div class="form-group">
         <label for="usuario">Usuario o Correo</label>
@@ -11,7 +13,8 @@
         <input type="password" id="clave" [(ngModel)]="clave" name="clave" required>
       </div>
       <button type="submit" class="login-button">Entrar</button>
-      <p class="error-message">{{ mensaje }}</p>
+      
+      <p class="error-message" *ngIf="mensaje">{{ mensaje }}</p>
     </form>
-  </div>
+  </article>
 </div>

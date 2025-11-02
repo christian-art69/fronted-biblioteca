@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { Prestamos } from './prestamos.service';
+// CORREGIDO: La importación apuntaba a '.service.ts' en lugar de al componente
+import { Prestamos } from './prestamos';
 
 describe('Prestamos', () => {
   let component: Prestamos;

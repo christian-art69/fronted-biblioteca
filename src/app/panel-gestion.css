@@ -1,9 +1,9 @@
 .panel {
-  background-color: #FFFFFF;
-  color: #333333;
+  background-color: var(--color-superficie);
+  color: var(--color-texto-secundario);
   padding: 30px;
-  border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+  border-radius: var(--radio-borde);
+  box-shadow: var(--sombra-panel);
 }
 
 .panel h2 {
@@ -21,28 +21,32 @@
   margin-bottom: 30px;
 }
 
-.formulario input {
+.formulario input,
+.formulario select { /* RECOMENDADO: Aplicar estilos también a los <select> */
   flex: 1; 
   min-width: 150px;
   padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde-input);
   font-size: 15px;
   font-family: inherit;
+  background-color: var(--color-superficie); /* Asegura fondo blanco en modales */
+  color: var(--color-texto-secundario); /* Asegura texto oscuro en modales */
 }
 
-.formulario input:focus {
+.formulario input:focus,
+.formulario select:focus {
   outline: none;
-  border-color: #F97316;
+  border-color: var(--color-borde-foco);
   box-shadow: 0 0 5px rgba(249, 115, 22, 0.5);
 }
 
 .formulario button {
   padding: 12px 20px;
   border: none;
-  border-radius: 8px;
-  background-color: #1a1a1a;
-  color: #FFFFFF;
+  border-radius: var(--radio-borde-input);
+  background-color: var(--color-boton-principal);
+  color: var(--color-superficie);
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -50,7 +54,7 @@
 }
 
 .formulario button:hover {
-  background-color: #333;
+  background-color: var(--color-boton-principal-hover);
 }
 
 .tabla {
@@ -61,11 +65,11 @@
 .tabla th, .tabla td {
   padding: 15px;
   text-align: left;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--color-borde-tabla);
 }
 
 .tabla thead th {
-  background-color: #f7f7f7;
+  background-color: var(--color-fondo-tabla-header);
   font-weight: 600;
   color: #555;
   text-transform: uppercase;
@@ -73,29 +77,29 @@
 }
 
 .tabla tbody tr:hover {
-  background-color: #f9f9f9;
+  background-color: var(--color-fondo-tabla-hover);
 }
 
 .tabla td button {
   padding: 8px 12px;
   margin-right: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--color-borde);
   border-radius: 6px;
   background-color: transparent;
-  color: #333;
+  color: var(--color-texto-secundario);
   cursor: pointer;
   font-size: 13px;
   transition: background-color 0.3s, color 0.3s;
 }
 
 .tabla td button:hover {
-  background-color: #e0e0e0;
+  background-color: var(--color-boton-secundario-hover);
 }
 
 .tabla td button:last-child:hover {
-  background-color: #EF4444;
-  border-color: #EF4444;
-  color: #FFFFFF;
+  background-color: var(--color-error);
+  border-color: var(--color-error);
+  color: var(--color-superficie);
 }
 
 .busqueda-container {
@@ -107,8 +111,8 @@
 .busqueda-container input {
   flex: 1;
   padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde-input);
   font-size: 15px;
   font-family: inherit;
 }
@@ -116,9 +120,9 @@
 .busqueda-container button {
   padding: 12px 20px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radio-borde-input);
   background-color: #555;
-  color: #FFFFFF;
+  color: var(--color-superficie);
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -126,25 +130,25 @@
 }
 
 .busqueda-container button:hover {
-  background-color: #333;
+  background-color: var(--color-boton-principal-hover);
 }
 
 /*APARTADO PARA SITUACION USUARIO (EDITOR)*/
 
 .vigente {
-  color: #10B981;
+  color: var(--color-exito);
   font-weight: 600;
 }
 .atrasado {
-  color: #efb344;
+  color: var(--color-atrasado-texto);
   font-weight: 600;
 }
 .bloqueado {
-  color: #EF4444;
+  color: var(--color-bloqueado);
   font-weight: 600;
 }
 .prestamoActivo {
-  color: #efb344;
+  color: var(--color-atrasado-texto); /* Asumiendo que es similar a 'atrasado' */
   font-weight: 600;
 }
 
@@ -168,9 +172,9 @@
   display: flex;
   flex-direction: column;
   
-  background-color: #FFFFFF;
-  color: #333;
-  border-radius: 12px;
+  background-color: var(--color-superficie);
+  color: var(--color-texto-secundario);
+  border-radius: var(--radio-borde);
   box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
   width: 100%;
   max-width: 500px;
@@ -182,7 +186,7 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #e0e0e0;
+  border-bottom: 1px solid var(--color-borde-tabla);
   padding: 25px;
 }
 
@@ -220,8 +224,8 @@
 .modal-body .form-group select {
   width: 100%;
   padding: 12px;
-  border: 1px solid #ccc;
-  border-radius: 8px;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--radio-borde-input);
   font-size: 15px;
   font-family: inherit;
 }
@@ -231,14 +235,14 @@
   display: flex;
   justify-content: flex-end;
   gap: 10px;
-  border-top: 1px solid #e0e0e0; 
+  border-top: 1px solid var(--color-borde-tabla); 
   padding: 20px 25px;
 }
 
 .modal-footer button {
   padding: 12px 20px;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radio-borde-input);
   font-size: 15px;
   font-weight: 600;
   cursor: pointer;
@@ -250,24 +254,24 @@
   color: #555;
 }
 .btn-cancelar:hover {
-  background-color: #e0e0e0;
+  background-color: var(--color-boton-secundario-hover);
 }
 
 .btn-guardar {
-  background-color: #1a1a1a;
-  color: #FFFFFF;
+  background-color: var(--color-boton-principal);
+  color: var(--color-superficie);
 }
 .btn-guardar:hover {
-  background-color: #333;
+  background-color: var(--color-boton-principal-hover);
 }
 
 /**/
 
 .mensaje-error-prestamo {
-  color: #EF4444;
+  color: var(--color-error);
   background-color: #fceded;
   padding: 10px;
-  border-radius: 8px;
+  border-radius: var(--radio-borde-input);
   margin-top: -15px;
   margin-bottom: 20px;
   text-align: center;
@@ -277,34 +281,34 @@
 /*DISPONIBILIDAD DE LIBROS*/
 
 .disponible {
-  color: #10B981;
+  color: var(--color-exito);
   font-weight: 600;
 }
 .agotado {
-  color: #EF4444;
+  color: var(--color-error);
   font-weight: 600;
 }
 
 /*ALERTA DE FECHA PRESTAMO*/
 
 .alerta-prestamo[data-estado*="Atrasado"] {
-  color: #EF4444;
+  color: var(--color-error);
   font-weight: 600;
 }
 .alerta-prestamo[data-estado*="Faltan"],
 .alerta-prestamo[data-estado*="¡Entrega hoy!"] {
-  color: #F59E0B;
+  color: var(--color-advertencia);
   font-weight: 600;
 }
 .alerta-prestamo[data-estado="En plazo"] {
-  color: #10B981;
+  color: var(--color-exito);
 }
 
 .entrega-a-tiempo {
-  color: #10B981;
+  color: var(--color-exito);
 }
 .entrega-atrasada {
-  color: #EF4444;
+  color: var(--color-error);
 }
 
 /*ESTILOS DE USUARIOS*/

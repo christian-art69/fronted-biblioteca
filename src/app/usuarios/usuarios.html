@@ -10,7 +10,6 @@
     <button (click)="cargarUsuarios()">Buscar</button>
   </div>
 
-
   <form class="formulario" (ngSubmit)="registrarUsuario()">
   
     <input type="text" placeholder="Nombre" [(ngModel)]="nuevoUsuario.nombre" name="nombre" required />
@@ -21,7 +20,9 @@
       placeholder="RUT" 
       [(ngModel)]="nuevoUsuario.rut" 
       name="rut" 
-      autocomplete="off" /> <input 
+      autocomplete="off" /> 
+      
+    <input 
       type="password" 
       placeholder="Contraseña" 
       [(ngModel)]="nuevoUsuario.password" 

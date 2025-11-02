@@ -22,7 +22,7 @@
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  color: #FFFFFF;
+  color: var(--color-texto-principal);
 }
 
 .user-info-widget .user-name {
@@ -42,36 +42,37 @@
   padding: 2px 8px;
   border-radius: 10px;
   margin-top: 4px;
-  color: #FFFFFF;
+  color: var(--color-texto-principal);
   text-align: center;
 }
 
+/* Usando variables para los estados */
 .user-status[data-situacion="Vigente"] {
-  background-color: #10B981;
+  background-color: var(--color-exito);
 }
 .user-status[data-situacion="Prestamo Activo"] {
-  background-color: #3B82F6;
+  background-color: var(--color-activo);
 }
 .user-status[data-situacion="Atrasado"] {
-  background-color: #F59E0B;
+  background-color: var(--color-advertencia);
 }
 .user-status[data-situacion="Bloqueado"] {
-  background-color: #EF4444;
+  background-color: var(--color-error);
 }
 
 nav a {
-  color: #FFFFFF;
+  color: var(--color-texto-principal);
   text-decoration: none;
   padding: 10px 15px;
-  border-radius: 8px;
+  border-radius: var(--radio-borde-input);
   font-weight: 400;
   transition: background-color 0.3s, color 0.3s;
   cursor: pointer;
 }
 
 nav a:hover, nav a.activo {
-  background-color: #FFFFFF;
-  color: #F97316; 
+  background-color: var(--color-superficie);
+  color: var(--color-primario); 
 }
 
 .connection-status {
@@ -88,11 +89,11 @@ nav a:hover, nav a.activo {
 }
 
 .connection-status .connected {
-  background-color: #10B981;
+  background-color: var(--color-exito);
 }
 
 .connection-status .disconnected {
-  background-color: #EF4444;
+  background-color: var(--color-error);
 }
 
 main {

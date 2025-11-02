@@ -88,8 +88,9 @@ export class Usuarios implements OnInit {
       });
     }
 
-  eliminarUsuario(usuario: any) {
-    if (confirm(`¿Estás seguro de que deseas eliminar "${usuario.titulo}"?`)) {
+  eliminarUsuario(usuario: IUsuario) {
+    // CORREGIDO: Se usa "usuario.nombre" en lugar de "usuario.titulo"
+    if (confirm(`¿Estás seguro de que deseas eliminar a "${usuario.nombre}"?`)) {
       this.usuarioService.eliminarUsuario(usuario._id).subscribe({
         next: () => {
           this.usuarios = this.usuarios.filter(l => l._id !== usuario._id);
