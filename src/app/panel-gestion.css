@@ -1,0 +1,322 @@
+.panel {
+  background-color: #FFFFFF;
+  color: #333333;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.panel h2 {
+  font-size: 28px;
+  font-weight: 600;
+  margin-bottom: 25px;
+  border-bottom: 2px solid #f0f0f0;
+  padding-bottom: 15px;
+}
+
+.formulario {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+.formulario input {
+  flex: 1; 
+  min-width: 150px;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.formulario input:focus {
+  outline: none;
+  border-color: #F97316;
+  box-shadow: 0 0 5px rgba(249, 115, 22, 0.5);
+}
+
+.formulario button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #1a1a1a;
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.formulario button:hover {
+  background-color: #333;
+}
+
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabla th, .tabla td {
+  padding: 15px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.tabla thead th {
+  background-color: #f7f7f7;
+  font-weight: 600;
+  color: #555;
+  text-transform: uppercase;
+  font-size: 12px;
+}
+
+.tabla tbody tr:hover {
+  background-color: #f9f9f9;
+}
+
+.tabla td button {
+  padding: 8px 12px;
+  margin-right: 8px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: transparent;
+  color: #333;
+  cursor: pointer;
+  font-size: 13px;
+  transition: background-color 0.3s, color 0.3s;
+}
+
+.tabla td button:hover {
+  background-color: #e0e0e0;
+}
+
+.tabla td button:last-child:hover {
+  background-color: #EF4444;
+  border-color: #EF4444;
+  color: #FFFFFF;
+}
+
+.busqueda-container {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 25px;
+}
+
+.busqueda-container input {
+  flex: 1;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.busqueda-container button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  background-color: #555;
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.busqueda-container button:hover {
+  background-color: #333;
+}
+
+/*APARTADO PARA SITUACION USUARIO (EDITOR)*/
+
+.vigente {
+  color: #10B981;
+  font-weight: 600;
+}
+.atrasado {
+  color: #efb344;
+  font-weight: 600;
+}
+.bloqueado {
+  color: #EF4444;
+  font-weight: 600;
+}
+.prestamoActivo {
+  color: #efb344;
+  font-weight: 600;
+}
+
+/*APARTADO PARA MODAL USUARIO (EDITOR)*/
+
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  max-height: 90vh;
+  display: flex;
+  flex-direction: column;
+  
+  background-color: #FFFFFF;
+  color: #333;
+  border-radius: 12px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 500px;
+  overflow: hidden; 
+}
+
+.modal-header {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 25px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 22px;
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+  color: #888;
+}
+
+.modal-body {
+  overflow-y: auto;
+  flex-grow: 1; 
+  padding: 20px 25px;
+}
+
+.modal-body .form-group {
+  margin-bottom: 15px;
+}
+
+.modal-body .form-group label {
+  display: block;
+  margin-bottom: 8px;
+  font-weight: 600;
+  color: #555;
+}
+
+.modal-body .form-group input,
+.modal-body .form-group select {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 15px;
+  font-family: inherit;
+}
+
+.modal-footer {
+  flex-shrink: 0;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  border-top: 1px solid #e0e0e0; 
+  padding: 20px 25px;
+}
+
+.modal-footer button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-cancelar {
+  background-color: #f0f0f0;
+  color: #555;
+}
+.btn-cancelar:hover {
+  background-color: #e0e0e0;
+}
+
+.btn-guardar {
+  background-color: #1a1a1a;
+  color: #FFFFFF;
+}
+.btn-guardar:hover {
+  background-color: #333;
+}
+
+/**/
+
+.mensaje-error-prestamo {
+  color: #EF4444;
+  background-color: #fceded;
+  padding: 10px;
+  border-radius: 8px;
+  margin-top: -15px;
+  margin-bottom: 20px;
+  text-align: center;
+  font-weight: 500;
+}
+
+/*DISPONIBILIDAD DE LIBROS*/
+
+.disponible {
+  color: #10B981;
+  font-weight: 600;
+}
+.agotado {
+  color: #EF4444;
+  font-weight: 600;
+}
+
+/*ALERTA DE FECHA PRESTAMO*/
+
+.alerta-prestamo[data-estado*="Atrasado"] {
+  color: #EF4444;
+  font-weight: 600;
+}
+.alerta-prestamo[data-estado*="Faltan"],
+.alerta-prestamo[data-estado*="¡Entrega hoy!"] {
+  color: #F59E0B;
+  font-weight: 600;
+}
+.alerta-prestamo[data-estado="En plazo"] {
+  color: #10B981;
+}
+
+.entrega-a-tiempo {
+  color: #10B981;
+}
+.entrega-atrasada {
+  color: #EF4444;
+}
+
+/*ESTILOS DE USUARIOS*/
+
+.user-info-widget .user-role {
+  font-size: 0.9em;
+  font-style: italic;
+  opacity: 0.8;
+}
+
+.user-info-widget .user-cargo {
+  font-size: 0.9em;
+  opacity: 0.8;
+  font-weight: 500;
+}

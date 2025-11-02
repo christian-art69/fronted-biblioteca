@@ -1,1 +1,64 @@
-<p>prestamos works!</p>
+<section class="panel">
+  <h2 *ngIf="esAdmin">Gestión de Préstamos</h2>
+  <h2 *ngIf="!esAdmin">Mis Préstamos</h2>
+
+  <form class="formulario" *ngIf="esAdmin" (ngSubmit)="registrarPrestamo()">
+    
+    <select [(ngModel)]="nuevoPrestamo.usuario" name="usuario" required>
+      <option value="" disabled>Selecciona un usuario</option>
+      <option *ngFor="let user of usuarios" [value]="user._id">
+        {{ user.nombre }} ({{ user.correo }})
+      </option>
+    </select>
+
+    <select [(ngModel)]="nuevoPrestamo.libro" name="libro" required>
+      <option value="" disabled>Selecciona un libro</option>
+      <option *ngFor="let libro of librosDisponibles" [value]="libro._id">
+        {{ libro.titulo }} ({{ libro.autor }})
+      </option>
+    </select>
+    
+    <input type="date" [(ngModel)]="nuevoPrestamo.fechaPrestamo" name="fechaPrestamo" required />
+    <input type="date" [(ngModel)]="nuevoPrestamo.fechaDevolucion" name="fechaDevolucion" />
+    <button type="submit" [disabled]="!puedeRegistrar">Registrar Préstamo</button>
+  </form>
+
+  <div *ngIf="nuevoPrestamo.usuario && !puedeRegistrar && esAdmin" class="mensaje-error-prestamo">
+    Este usuario tiene la situación "<b>{{ usuarioSeleccionado?.situacion }}</b>" y no puede registrar nuevos préstamos.
+  </div>
+
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th *ngIf="esAdmin">Usuario</th>
+        <th>Libro</th>
+        <th>Préstamo</th>
+        <th>Devolución</th>
+        <th>Alerta</th>
+        <th *ngIf="esAdmin">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let prestamo of prestamos">
+        <td *ngIf="esAdmin">{{ prestamo.usuario.nombre }}</td> 
+        
+        <td>{{ prestamo.libro.titulo }}</td> 
+        
+        <td>{{ prestamo.fechaPrestamo | date:'shortDate' }}</td>
+        <td>{{ prestamo.fechaDevolucion | date:'shortDate' }}</td>
+
+        <td>
+          <span class="alerta-prestamo" 
+                [attr.data-estado]="calcularEstadoPrestamo(prestamo.fechaDevolucion)">
+            {{ calcularEstadoPrestamo(prestamo.fechaDevolucion) }}
+          </span>
+        </td>
+
+        <td *ngIf="esAdmin">
+          <button (click)="marcarDevuelto(prestamo)">Marcar devuelto</button>
+          <button (click)="eliminarPrestamo(prestamo)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>   
+  </table>
+</section>

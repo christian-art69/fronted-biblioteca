@@ -1,1 +1,33 @@
-<p>historial works!</p>
+<section class="panel">
+  <h2 *ngIf="esAdmin">Historial de Préstamos</h2>
+  <h2 *ngIf="!esAdmin">Mi Historial de Préstamos</h2>
+
+    <table class="tabla">
+        <thead>
+            <tr>
+            <th *ngIf="esAdmin">Usuario</th>
+            <th>Libro</th>
+            <th>Fecha de Préstamo</th>
+            <th>Fecha Devolución</th> 
+            <th>Estado de Entrega</th> 
+            <th>Observaciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of historial">
+            <td *ngIf="esAdmin">{{ item.usuario.nombre }}</td>
+            <td>{{ item.libro.titulo }}</td>
+            <td>{{ item.fechaPrestamo | date:'shortDate' }}</td>
+            <td>{{ item.fechaDevolucionReal | date:'shortDate' }}</td> 
+            <td>
+                <span [class.entrega-a-tiempo]="item.estadoEntrega === 'A tiempo'"
+                    [class.entrega-atrasada]="item.estadoEntrega === 'Atrasado'">
+                {{ item.estadoEntrega }}
+                </span>
+            </td>
+            
+            <td>{{ item.observaciones || 'N/A' }}</td>
+            </tr>
+        </tbody>
+    </table>
+</section>

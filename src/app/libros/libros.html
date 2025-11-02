@@ -1,1 +1,95 @@
 <p>libros works!</p>
+<section class="panel">
+  <h2 *ngIf="esAdmin">Gestión de Libros</h2>
+  <h2 *ngIf="!esAdmin">Buscar Libros</h2>
+
+  <div class="busqueda-container">
+    <input 
+      type="text" 
+      placeholder="Buscar por título o autor..." 
+      [(ngModel)]="terminoBusqueda"
+      (keyup.enter)="cargarLibros()">
+    <button (click)="cargarLibros()">Buscar</button>
+  </div>
+
+  <form class="formulario" *ngIf="esAdmin" (submit)="agregarLibro()">
+    <input type="text" placeholder="Título" [(ngModel)]="nuevoLibro.titulo" name="titulo" required />
+    <input type="text" placeholder="Autor" [(ngModel)]="nuevoLibro.autor" name="autor" required />
+    <input type="text" placeholder="Género" [(ngModel)]="nuevoLibro.genero" name="genero" />
+    <input type="number" placeholder="Año" [(ngModel)]="nuevoLibro.ano" name="ano" />
+    <input type="number" placeholder="Copias" [(ngModel)]="nuevoLibro.cantidad" name="cantidad" />
+    <button type="submit">Agregar Libro</button>
+  </form>
+
+  <table class="tabla">
+    <thead>
+      <tr>
+        <th>Título</th>
+        <th>Autor</th>
+        <th>Género</th>
+        <th>Año</th>
+        <th>Disponibles</th>
+        <th>Disponibilidad</th>
+        <th *ngIf="esAdmin">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let libro of libros">
+        <td>{{ libro.titulo }}</td>
+        <td>{{ libro.autor }}</td>
+        <td>{{ libro.genero }}</td>
+        <td>{{ libro.ano }}</td>
+        <td>{{ libro.cantidad }}</td>
+        <td>
+          <span [class.disponible]="libro.cantidad > 0" 
+                [class.agotado]="libro.cantidad === 0">
+            {{ libro.cantidad > 0 ? 'Disponible' : 'Agotado' }}
+          </span>
+        </td>
+        <td *ngIf="esAdmin">
+          <button (click)="editarLibro(libro)">Editar</button>
+          <button (click)="eliminarLibro(libro)">Eliminar</button>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</section>
+
+<div class="modal-backdrop" *ngIf="libroSeleccionado">
+  <div class="modal-content">
+    
+    <div class="modal-header">
+      <h2>Editar Libro</h2>
+      <button (click)="cerrarModal()" class="close-button">&times;</button>
+    </div>
+
+    <div class="modal-body" *ngIf="libroSeleccionado">
+      <div class="form-group">
+        <label for="editTitulo">Título</label>
+        <input id="editTitulo" type="text" [(ngModel)]="libroSeleccionado.titulo" name="titulo">
+      </div>
+      <div class="form-group">
+        <label for="editAutor">Autor</label>
+        <input id="editAutor" type="text" [(ngModel)]="libroSeleccionado.autor" name="autor">
+      </div>
+      <div class="form-group">
+        <label for="editGenero">Género</label>
+        <input id="editGenero" type="text" [(ngModel)]="libroSeleccionado.genero" name="genero">
+      </div>
+      <div class="form-group">
+        <label for="editAno">Año</label>
+        <input id="editAno" type="number" [(ngModel)]="libroSeleccionado.ano" name="ano">
+      </div>
+      <div class="form-group">
+        <label for="editCantidad">Cantidad</label>
+        <input id="editCantidad" type="number" [(ngModel)]="libroSeleccionado.cantidad" name="cantidad">
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button (click)="cerrarModal()" class="btn-cancelar">Cancelar</button>
+      <button (click)="guardarCambios()" class="btn-guardar">Guardar Cambios</button>
+    </div>
+    
+  </div>
+</div>

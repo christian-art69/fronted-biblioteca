@@ -1,0 +1,44 @@
+<div class="connection-status">
+  <span [class]="isConnected ? 'connected' : 'disconnected'">
+    {{ isConnected ? '✅ Conectado' : '❌ Desconectado' }}
+  </span>
+</div>
+
+<div class="container" *ngIf="authService.isLoggedIn$ | async">
+  
+  <header class="header">
+    
+    <h1>{{ title }}</h1>
+
+    <nav *ngIf="authService.role$ | async as role">
+      <ng-container *ngIf="role === 'Admin'">
+        <a routerLink="/libros" routerLinkActive="activo">Gestión Libros</a>
+        <a routerLink="/usuarios" routerLinkActive="activo">Gestión Usuarios</a>
+        <a routerLink="/prestamos" routerLinkActive="activo">Gestión Préstamos</a>
+        <a routerLink="/historial" routerLinkActive="activo">Historial</a>
+      </ng-container>
+      <ng-container *ngIf="role === 'Usuario'">
+        <a routerLink="/libros" routerLinkActive="activo">Buscar Libros</a>
+        <a routerLink="/prestamos" routerLinkActive="activo">Mis Préstamos</a>
+        <a routerLink="/historial" routerLinkActive="activo">Mi Historial</a>
+      </ng-container>
+      <a (click)="logout()">Cerrar Sesión</a>
+    </nav>     
+
+    <div class="user-info-widget" *ngIf="authService.currentUser$ | async as user">
+      <span class="user-name">{{ user.nombre }}</span>
+      <span class="user-role">{{ user.rol }}</span>
+      <span class="user-cargo">{{ user.cargo }}</span>
+      <span class="user-status" [attr.data-situacion]="user.situacion">
+        {{ user.situacion }}
+      </span>
+    </div>
+
+  </header>
+
+  <main>
+    <router-outlet></router-outlet>
+  </main>
+</div>
+
+<router-outlet *ngIf="!(authService.isLoggedIn$ | async)"></router-outlet>
