@@ -1,13 +1,6 @@
-<div class="connection-status">
-  <span [class]="isConnected ? 'connected' : 'disconnected'">
-    {{ isConnected ? '✅ Conectado' : '❌ Desconectado' }}
-  </span>
-</div>
-
-<div class="container" *ngIf="authService.isLoggedIn()">
+<div *ngIf="authService.isLoggedIn()">
   
   <header class="header">
-    
     <h1>{{ title }}</h1>
 
     <nav *ngIf="authService.role() as role">
@@ -22,7 +15,7 @@
         <a routerLink="/prestamos" routerLinkActive="activo">Mis Préstamos</a>
         <a routerLink="/historial" routerLinkActive="activo">Mi Historial</a>
       </ng-container>
-      <a (click)="logout()">Cerrar Sesión</a>
+      <a (click)="logout()" class="logout-link" style="cursor: pointer;">Cerrar Sesión</a>
     </nav>     
 
     <div class="user-info-widget" *ngIf="authService.currentUser() as user">
@@ -33,12 +26,18 @@
         {{ user.situacion }}
       </span>
     </div>
-
   </header>
 
-  <main>
+  <main class="main-content">
     <router-outlet></router-outlet>
   </main>
+
 </div>
 
 <router-outlet *ngIf="!authService.isLoggedIn()"></router-outlet>
+
+<div class="connection-status">
+  <span [class]="isConnected ? 'connected' : 'disconnected'">
+    {{ isConnected ? '✅ Conectado' : '❌ Desconectado' }}
+  </span>
+</div>

@@ -1,101 +1,168 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-import { UsuarioService } from '../usuarios/usuario.service';
-import { IUsuario, ICrearUsuario} from '../interfaces/usuario.interfaces';
+// 1. Importa ReactiveFormsModule
+import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { IUsuario } from '../interfaces/usuario.interfaces';
+import { UsuarioService } from './usuario.service';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  imports: [CommonModule, FormsModule],  
+  // 2. Añade ReactiveFormsModule
+  imports: [CommonModule, HttpClientModule, ReactiveFormsModule],
   templateUrl: './usuarios.html',
-  styleUrls: ['./usuarios.css', '../panel-gestion.css']
+  // 3. Importa el CSS de gestión
+  styleUrls: ['../panel-gestion.css']
 })
 export class Usuarios implements OnInit {
-  usuarios: IUsuario[] = [];
-  nuevoUsuario: ICrearUsuario = {
-    nombre: '',
-    correo: '',
-    rut: '',
-    rol: 'Usuario',
-    password: '',
-    cargo: 'Estudiante'
-  };
-  terminoBusqueda: string = '';
-  usuarioSeleccionado: IUsuario | null = null;
-  nuevaPasswordModal: string = '';
 
-  constructor(private usuarioService: UsuarioService) {}
+  // 4. Inyecta servicios y FormBuilder
+  private fb = inject(FormBuilder);
+  private usuarioService = inject(UsuarioService);
+  private authService = inject(AuthService); // Lo usamos para el token
+
+  usuarios: IUsuario[] = [];
+  filtro: string = '';
+  usuariosFiltrados: IUsuario[] = [];
+
+  public usuarioForm: FormGroup;
+  public modalVisible: boolean = false;
+  public esModoEdicion: boolean = false;
+  public usuarioActualId: string | null = null;
+  public mensajeError: string | null = null;
+  public mensajeExito: string | null = null;
+
+  // Opciones para los <select>
+  roles = ['Admin', 'Usuario'];
+  cargos = ['Estudiante', 'Docente', 'Bibliotecario', 'Administrativo'];
+  situaciones = ['Vigente', 'Atrasado', 'Bloqueado', 'Prestamo Activo'];
+
+  // 5. Define el formulario reactivo con validadores
+  constructor() {
+    this.usuarioForm = this.fb.group({
+      nombre: ['', [Validators.required, Validators.minLength(3)]],
+      correo: ['', [Validators.required, Validators.email]],
+      rut: ['', [Validators.required, Validators.pattern(/^\d{1,2}\.\d{3}\.\d{3}-[\dkK]$/)]],
+      password: ['', [Validators.minLength(6)]], // Opcional al editar, requerido al crear
+      rol: ['Usuario', [Validators.required]],
+      cargo: ['Estudiante', [Validators.required]],
+      situacion: ['Vigente', [Validators.required]]
+    });
+  }
 
   ngOnInit(): void {
     this.cargarUsuarios();
   }
-  
+
+  // 6. Helper para los controles del formulario
+  get f() {
+    return this.usuarioForm.controls;
+  }
+
   cargarUsuarios(): void {
-    this.usuarioService.getUsuarios(this.terminoBusqueda).subscribe({
+    this.usuarioService.getUsuarios().subscribe({
       next: (data) => {
         this.usuarios = data;
-        console.log('Usuarios cargados exitosamente:', this.usuarios);
+        this.filtrarUsuarios();
       },
-      error: (err) => console.error('Error al cargar Usuarios:', err)
+      error: (err) => this.mensajeError = 'Error al cargar los usuarios.'
     });
   }
 
-  registrarUsuario() {
-    this.usuarioService.registrarUsuario(this.nuevoUsuario).subscribe({
-      next: (usuarioGuardado) => {
-        this.usuarios.push(usuarioGuardado);
-        this.nuevoUsuario = {
-          nombre: '',
-          correo: '',
-          rut: '',
-          rol: 'Usuario',
-          password: '',
-          cargo: 'Estudiante'
-        };
-      },
-      error: (err) => console.error('Error al registrar el usuario', err)
-    });
+  filtrarUsuarios(): void {
+    const filtroLower = this.filtro.toLowerCase();
+    this.usuariosFiltrados = this.usuarios.filter(user =>
+      user.nombre.toLowerCase().includes(filtroLower) ||
+      user.correo.toLowerCase().includes(filtroLower) ||
+      user.rut.toLowerCase().includes(filtroLower)
+    );
   }
 
-  editarUsuario(usuario: IUsuario): void {
-    this.usuarioSeleccionado = { ...usuario };
-    this.nuevaPasswordModal = '';
+  abrirModalNuevo(): void {
+    this.esModoEdicion = false;
+    this.modalVisible = true;
+    this.usuarioForm.reset({
+      rol: 'Usuario',
+      cargo: 'Estudiante',
+      situacion: 'Vigente'
+    });
+    // 7. La contraseña es requerida solo al crear
+    this.f['password'].setValidators([Validators.required, Validators.minLength(6)]);
+    this.f['password'].updateValueAndValidity();
+    this.mensajeError = null;
+    this.mensajeExito = null;
   }
+
+  abrirModalEditar(usuario: IUsuario): void {
+    this.esModoEdicion = true;
+    this.modalVisible = true;
+    this.usuarioActualId = usuario._id ?? null;
+    this.mensajeError = null;
+    this.mensajeExito = null;
+
+    // 8. La contraseña es opcional al editar
+    this.f['password'].clearValidators();
+    this.f['password'].setValidators([Validators.minLength(6)]);
+    this.f['password'].updateValueAndValidity();
+
+    // 9. Carga los datos en el formulario
+    this.usuarioForm.patchValue(usuario);
+    this.f['password'].setValue(''); // No mostrar la contraseña hasheada
+  }
+
   cerrarModal(): void {
-    this.usuarioSeleccionado = null;
+    this.modalVisible = false;
+    this.usuarioActualId = null;
   }
-  guardarCambios(): void {
-      if (!this.usuarioSeleccionado) return;
 
-      const cambios: Partial<IUsuario> & { password?: string } = {
-        ...this.usuarioSeleccionado
-      };
-
-      if (this.nuevaPasswordModal.trim() !== '') {
-        cambios.password = this.nuevaPasswordModal;
-      }
-
-      this.usuarioService.updateUsuario(this.usuarioSeleccionado._id, cambios).subscribe({
-        next: (usuarioActualizado) => {
-          const index = this.usuarios.findIndex(u => u._id === usuarioActualizado._id);
-          if (index !== -1) {
-            this.usuarios[index] = usuarioActualizado;
-          }
-          this.cerrarModal();
-        },
-        error: (err) => console.error('Error al guardar los cambios', err)
-      });
+  guardarUsuario(): void {
+    if (this.usuarioForm.invalid) {
+      this.usuarioForm.markAllAsTouched();
+      return;
     }
 
-  eliminarUsuario(usuario: IUsuario) {
-    // CORREGIDO: Se usa "usuario.nombre" en lugar de "usuario.titulo"
-    if (confirm(`¿Estás seguro de que deseas eliminar a "${usuario.nombre}"?`)) {
-      this.usuarioService.eliminarUsuario(usuario._id).subscribe({
+    this.mensajeError = null;
+    this.mensajeExito = null;
+    let usuarioData = { ...this.usuarioForm.value };
+
+    // 10. No enviar la contraseña si está vacía en modo edición
+    if (this.esModoEdicion && !usuarioData.password) {
+      delete usuarioData.password;
+    }
+
+    if (this.esModoEdicion && this.usuarioActualId) {
+      // Modo Edición
+      this.usuarioService.updateUsuario(this.usuarioActualId, usuarioData).subscribe({
         next: () => {
-          this.usuarios = this.usuarios.filter(l => l._id !== usuario._id);
+          this.mensajeExito = 'Usuario actualizado correctamente.';
+          this.cargarUsuarios();
+          this.cerrarModal();
         },
-        error: (err) => console.error('Error al eliminar el usuario:', err)
+        error: (err) => this.mensajeError = `Error al actualizar: ${err.error?.message || 'Verifique los datos.'}`
+      });
+    } else {
+      // Modo Creación
+      this.authService.register(usuarioData).subscribe({ // Usa el register del authService
+        next: () => {
+          this.mensajeExito = 'Usuario registrado correctamente.';
+          this.cargarUsuarios();
+          this.cerrarModal();
+        },
+        error: (err) => this.mensajeError = `Error al registrar: ${err.error?.message || 'Verifique los datos.'}`
+      });
+    }
+  }
+
+  eliminarUsuario(id: string): void {
+    if (confirm('¿Está seguro de que desea eliminar este usuario?')) {
+      this.usuarioService.deleteUsuario(id).subscribe({
+        next: () => {
+          this.mensajeExito = 'Usuario eliminado correctamente.';
+          this.cargarUsuarios();
+        },
+        error: (err) => this.mensajeError = 'Error al eliminar el usuario.'
       });
     }
   }

@@ -1,40 +1,44 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpClientModule } from '@angular/common/http';
 import { PrestamoService } from '../prestamos/prestamos.service';
+import { IPrestamo } from '../interfaces/prestamo.interfaces';
 import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-historial',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, HttpClientModule],
   templateUrl: './historial.html',
-  styleUrls: ['./historial.css', '../panel-gestion.css']
+  // 1. Solo añade el CSS de gestión
+  styleUrls: ['../panel-gestion.css']
 })
-
 export class Historial implements OnInit {
+  
+  public authService = inject(AuthService);
+  private prestamoService = inject(PrestamoService);
 
-  historial: any[] = [];
-  esAdmin: boolean = false;
-  miId: string | null = null;
-
-  constructor(
-    private prestamoService: PrestamoService,
-    private authService: AuthService
-  ) {}
+  historial: IPrestamo[] = [];
+  mensajeError: string | null = null;
 
   ngOnInit(): void {
-    this.esAdmin = (this.authService.getRole() === 'Admin');
-    this.miId = this.authService.getUserId();
+    this.cargarHistorial();
+  }
 
-    this.prestamoService.getHistorial().subscribe({
-      next: (data) => {
-        if (this.esAdmin) {
-          this.historial = data;
-        } else {
-          this.historial = data.filter(h => h.usuario._id === this.miId);
-        }
-      },
-      error: (err) => console.error('Error al cargar el historial', err)
-    });
+  cargarHistorial(): void {
+    const userRole = this.authService.role();
+    const userId = this.authService.userId();
+
+    if (userRole === 'Admin') {
+      this.prestamoService.getHistorial().subscribe({
+        next: (data) => this.historial = data,
+        error: (err) => this.mensajeError = 'Error al cargar el historial.'
+      });
+    } else if (userRole === 'Usuario' && userId) {
+      this.prestamoService.getHistorialPorUsuario(userId).subscribe({
+        next: (data) => this.historial = data,
+        error: (err) => this.mensajeError = 'Error al cargar tu historial.'
+      });
+    }
   }
 }

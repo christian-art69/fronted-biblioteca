@@ -1,166 +1,173 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
-
-import { AuthService } from '../services/auth.service';
-import { PrestamoService } from '../prestamos/prestamos.service';
-import { LibroService } from '../libros/libros.service';
-import { UsuarioService } from '../usuarios/usuario.service';
-
-import { IPrestamo, ICrearPrestamo } from '../interfaces/prestamo.interfaces';
-import { ILibro } from '../interfaces/libro.interfaces';
+// 1. Importa ReactiveFormsModule
+import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { PrestamoService } from './prestamos.service';
+import { IPrestamo } from '../interfaces/prestamo.interfaces';
 import { IUsuario } from '../interfaces/usuario.interfaces';
+import { ILibro } from '../interfaces/libro.interfaces';
+import { AuthService } from '../services/auth.service';
+import { UsuarioService } from '../usuarios/usuario.service'; // Para buscar usuarios
+import { LibroService } from '../libros/libros.service'; // Para buscar libros
 
 @Component({
   selector: 'app-prestamos',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  // 2. Añade ReactiveFormsModule
+  imports: [CommonModule, HttpClientModule, ReactiveFormsModule],
   templateUrl: './prestamos.html',
-  styleUrls: ['./prestamos.css', '../panel-gestion.css']
+  // 3. Importa el CSS de gestión
+  styleUrls: ['../panel-gestion.css']
 })
 export class Prestamos implements OnInit {
-  prestamos: IPrestamo[] = [];
-  libros: ILibro[] = [];
-  usuarios: IUsuario[] = [];
 
-  nuevoPrestamo: ICrearPrestamo = {
-    usuario: '',
-    libro: '',
-    fechaPrestamo: null,
-    fechaDevolucion: null
-  };
-  esAdmin: boolean = false;
-  miId: string | null = null;
+  // 4. Inyecta todos los servicios y FormBuilder
+  private fb = inject(FormBuilder);
+  public authService = inject(AuthService);
+  private prestamoService = inject(PrestamoService);
+  private usuarioService = inject(UsuarioService);
+  private libroService = inject(LibroService);
 
-  constructor(private prestamoService: PrestamoService, 
-    private libroService: LibroService,
-    private usuarioService: UsuarioService,
-    private authService: AuthService) {}
-  
+  public prestamoForm: FormGroup;
+  public prestamos: IPrestamo[] = [];
+  public mensajeError: string | null = null;
+  public mensajeExito: string | null = null;
+
+  // Búsqueda de usuarios y libros
+  public filtroUsuario = new FormControl('');
+  public filtroLibro = new FormControl('');
+  public usuariosEncontrados: IUsuario[] = [];
+  public librosEncontrados: ILibro[] = [];
+  public usuarioSeleccionado: IUsuario | null = null;
+  public libroSeleccionado: ILibro | null = null;
+
+  // 5. Define el formulario de préstamo
+  constructor() {
+    this.prestamoForm = this.fb.group({
+      usuarioId: ['', [Validators.required]],
+      libroId: ['', [Validators.required]],
+      // Las fechas se calculan en el backend, pero las mantenemos por si acaso
+      fechaPrestamo: [new Date().toISOString().split('T')[0], [Validators.required]],
+      fechaDevolucion: ['', [Validators.required]]
+    });
+
+    // Calcula la fecha de devolución (ej: 7 días)
+    const hoy = new Date();
+    const fechaDev = new Date(hoy.setDate(hoy.getDate() + 7));
+    this.prestamoForm.controls['fechaDevolucion'].setValue(fechaDev.toISOString().split('T')[0]);
+  }
+
   ngOnInit(): void {
-    this.esAdmin = (this.authService.getRole() === 'Admin');
-    this.miId = this.authService.getUserId();
     this.cargarPrestamos();
-    if (this.esAdmin) {
-      this.cargarLibros();
-      this.cargarUsuarios();
-    }
+  }
+
+  // 6. Helper para el formulario
+  get f() {
+    return this.prestamoForm.controls;
   }
 
   cargarPrestamos(): void {
-    this.prestamoService.getPrestamos().subscribe({
-      next: (data) => {
-        if (this.esAdmin) {
-          this.prestamos = data;
-        } else {
-          this.prestamos = data.filter(prestamo => prestamo.usuario._id === this.miId);
-        }
-      },
-      error: (err) => console.error('Error al cargar Prestamos', err)
-    });
-  }
+    const userRole = this.authService.role();
+    const userId = this.authService.userId();
 
-  cargarLibros(): void {
-    this.libroService.getLibros().subscribe(data => this.libros = data);
-  }
-  cargarUsuarios(): void {
-    this.usuarioService.getUsuarios().subscribe(data => this.usuarios = data);
-  }
-
-  get librosDisponibles(): ILibro[] {
-    return this.libros.filter(l => l.cantidad > 0);
-  }
-
-  get usuarioSeleccionado(): IUsuario | undefined {
-    if (!this.nuevoPrestamo.usuario) {
-      return undefined;
-    }
-    return this.usuarios.find(u => u._id === this.nuevoPrestamo.usuario);
-  }
-  get puedeRegistrar(): boolean {
-    if (!this.nuevoPrestamo.usuario) {
-      return false;
-    }
-    
-    const usuarioSeleccionado = this.usuarios.find(u => u._id === this.nuevoPrestamo.usuario);
-    
-    if (!usuarioSeleccionado) {
-      return false;
-    }
-    
-    return usuarioSeleccionado.situacion === 'Vigente';
-  }
-
-  registrarPrestamo(): void {
-      this.prestamoService.registrarPrestamo(this.nuevoPrestamo).subscribe({
-        next: (prestamoGuardado) => {
-          this.prestamos.push(prestamoGuardado); 
-          
-          this.cargarUsuarios();
-          this.cargarLibros();
-
-          this.nuevoPrestamo = { usuario: '', libro: '', fechaPrestamo: null, fechaDevolucion: null };
-        },
-        error: (err) => console.error('Error al registrar el prestamo', err)
+    if (userRole === 'Admin') {
+      this.prestamoService.getPrestamos().subscribe({
+        next: (data) => this.prestamos = data,
+        error: (err) => this.mensajeError = 'Error al cargar los préstamos.'
+      });
+    } else if (userRole === 'Usuario' && userId) {
+      this.prestamoService.getPrestamosPorUsuario(userId).subscribe({
+        next: (data) => this.prestamos = data,
+        error: (err) => this.mensajeError = 'Error al cargar tus préstamos.'
       });
     }
+  }
 
-  marcarDevuelto(prestamo: IPrestamo): void {
-    const observacion = window.prompt('Añadir observación sobre la devolución (opcional):');
+  // --- Funciones para el formulario de admin ---
 
-    if (observacion === null) {
-      return;
-    }
-
-    this.prestamoService.marcarDevuelto(prestamo._id, observacion).subscribe({
-      next: () => {
-        this.prestamos = this.prestamos.filter(p => p._id !== prestamo._id);
-        this.cargarUsuarios(); 
-        this.cargarLibros();
+  buscarUsuario(): void {
+    const rut = this.filtroUsuario.value;
+    if (!rut) return;
+    this.usuarioService.getUsuarioPorRut(rut).subscribe({
+      next: (data) => {
+        this.usuariosEncontrados = [data]; // Asumimos que getUsuarioPorRut devuelve un solo usuario
+        this.seleccionarUsuario(data);
       },
-      error: (err: any) => console.error('Error al devolver el préstamo', err)
+      error: () => {
+        this.usuariosEncontrados = [];
+        this.usuarioSeleccionado = null;
+        this.f['usuarioId'].setValue('');
+        alert('Usuario no encontrado.');
+      }
     });
   }
 
-  eliminarPrestamo(prestamo: IPrestamo): void {
-    if (!confirm(`¿ELIMINAR el préstamo de "${prestamo.libro.titulo}"? (Esta acción es para corregir errores y NO se guardará en el historial)`)) {
-      return;
-    }
-
-    this.prestamoService.eliminarPrestamo(prestamo._id).subscribe({
-      next: () => {
-        this.prestamos = this.prestamos.filter(p => p._id !== prestamo._id);
-        this.cargarUsuarios(); 
-        this.cargarLibros();
-      },
-      error: (err: any) => console.error('Error al eliminar el préstamo', err)
+  buscarLibro(): void {
+    const titulo = this.filtroLibro.value;
+    if (!titulo) return;
+    this.libroService.buscarLibrosPorTitulo(titulo).subscribe({
+      next: (data) => this.librosEncontrados = data,
+      error: () => this.librosEncontrados = []
     });
   }
 
-  calcularEstadoPrestamo(fechaDevolucionISO: string | Date | undefined): string {
-    if (!fechaDevolucionISO) {
-      return '';
-    }
-    
-    const hoy = new Date();
-    const fechaEntrega = new Date(fechaDevolucionISO);
-    
-    hoy.setHours(0, 0, 0, 0);
-    fechaEntrega.setHours(0, 0, 0, 0);
-    
-    const diffTime = fechaEntrega.getTime() - hoy.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+  seleccionarUsuario(usuario: IUsuario): void {
+    this.usuarioSeleccionado = usuario;
+    this.f['usuarioId'].setValue(usuario._id);
+    this.usuariosEncontrados = [];
+    this.filtroUsuario.setValue(usuario.rut); // Pone el RUT en el input
+  }
 
-    if (diffDays < 0) {
-      return `Atrasado por ${Math.abs(diffDays)} día(s)`;
+  seleccionarLibro(libro: ILibro): void {
+    this.libroSeleccionado = libro;
+    this.f['libroId'].setValue(libro._id);
+    this.librosEncontrados = [];
+    this.filtroLibro.setValue(libro.titulo); // Pone el título en el input
+  }
+
+  // 7. guardarPrestamo ahora usa el formulario reactivo
+  guardarPrestamo(): void {
+    if (this.prestamoForm.invalid) {
+      this.prestamoForm.markAllAsTouched();
+      return;
     }
-    if (diffDays === 0) {
-      return '¡Entrega hoy!';
+
+    this.mensajeError = null;
+    this.mensajeExito = null;
+    const prestamoData = {
+      usuario: this.f['usuarioId'].value,
+      libro: this.f['libroId'].value,
+      fechaDevolucion: this.f['fechaDevolucion'].value
+    };
+
+    this.prestamoService.addPrestamo(prestamoData).subscribe({
+      next: () => {
+        this.mensajeExito = 'Préstamo registrado exitosamente.';
+        this.cargarPrestamos();
+        // Limpia el formulario
+        this.prestamoForm.reset({
+          fechaPrestamo: new Date().toISOString().split('T')[0],
+          fechaDevolucion: this.prestamoForm.controls['fechaDevolucion'].value // Mantiene la fecha
+        });
+        this.filtroUsuario.reset();
+        this.filtroLibro.reset();
+        this.usuarioSeleccionado = null;
+        this.libroSeleccionado = null;
+      },
+      error: (err) => this.mensajeError = `Error al registrar el préstamo: ${err.error?.message || 'Error desconocido.'}`
+    });
+  }
+
+  devolverLibro(id: string): void {
+    if (confirm('¿Confirmar la devolución de este libro?')) {
+      this.prestamoService.devolverPrestamo(id).subscribe({
+        next: () => {
+          this.mensajeExito = 'Libro devuelto exitosamente.';
+          this.cargarPrestamos();
+        },
+        error: (err) => this.mensajeError = `Error al devolver el libro: ${err.error?.message}`
+      });
     }
-    if (diffDays <= 3) { 
-      return `Faltan ${diffDays} día(s)`;
-    }
-    
-    return 'En plazo';
   }
 }

@@ -1,33 +1,48 @@
-<section class="panel">
-  <h2 *ngIf="esAdmin">Historial de Préstamos</h2>
-  <h2 *ngIf="!esAdmin">Mi Historial de Préstamos</h2>
-
-    <table class="tabla">
-        <thead>
+<div class="gestion-container">
+  <div class="card">
+    <div class="card-header">
+      <h2>
+        {{ authService.role() === 'Admin' ? 'Historial de Préstamos (Todos)' : 'Mi Historial de Préstamos' }}
+      </h2>
+    </div>
+    
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
             <tr>
-            <th *ngIf="esAdmin">Usuario</th>
-            <th>Libro</th>
-            <th>Fecha de Préstamo</th>
-            <th>Fecha Devolución</th> 
-            <th>Estado de Entrega</th> 
-            <th>Observaciones</th>
+              <th *ngIf="authService.role() === 'Admin'">Usuario</th>
+              <th *ngIf="authService.role() === 'Admin'">RUT</th>
+              <th>Libro</th>
+              <th>Autor</th>
+              <th>Fecha Préstamo</th>
+              <th>Fecha Devolución</th>
+              <th>Estado</th>
             </tr>
-        </thead>
-        <tbody>
-            <tr *ngFor="let item of historial">
-            <td *ngIf="esAdmin">{{ item.usuario.nombre }}</td>
-            <td>{{ item.libro.titulo }}</td>
-            <td>{{ item.fechaPrestamo | date:'shortDate' }}</td>
-            <td>{{ item.fechaDevolucionReal | date:'shortDate' }}</td> 
-            <td>
-                <span [class.entrega-a-tiempo]="item.estadoEntrega === 'A tiempo'"
-                    [class.entrega-atrasada]="item.estadoEntrega === 'Atrasado'">
-                {{ item.estadoEntrega }}
+          </thead>
+          <tbody>
+            <tr *ngFor="let h of historial">
+              <td *ngIf="authService.role() === 'Admin'">{{ h.usuario?.nombre }}</td>
+              <td *ngIf="authService.role() === 'Admin'">{{ h.usuario?.rut }}</td>
+              <td>{{ h.libro?.titulo }}</td>
+              <td>{{ h.libro?.autor }}</td>
+              <td>{{ h.fechaPrestamo | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ h.fechaDevolucion | date: 'dd/MM/yyyy' }}</td>
+              <td>
+                <span class="user-status" 
+                      [style.background-color]="h.estado === 'Devuelto' ? 'var(--color-exito)' : 'var(--color-texto-secundario)'">
+                  {{ h.estado }}
                 </span>
-            </td>
-            
-            <td>{{ item.observaciones || 'N/A' }}</td>
+              </td>
             </tr>
-        </tbody>
-    </table>
-</section>
+            <tr *ngIf="historial.length === 0">
+              <td [attr.colspan]="authService.role() === 'Admin' ? 7 : 5" style="text-align: center;">
+                No hay registros en el historial.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

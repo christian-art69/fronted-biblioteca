@@ -1,64 +1,161 @@
-<section class="panel">
-  <h2 *ngIf="esAdmin">Gestión de Préstamos</h2>
-  <h2 *ngIf="!esAdmin">Mis Préstamos</h2>
+<div class="gestion-container">
 
-  <form class="formulario" *ngIf="esAdmin" (ngSubmit)="registrarPrestamo()">
+  <div *ngIf="mensajeExito" class="success-message">{{ mensajeExito }}</div>
+  <div *ngIf="mensajeError" class="error-api">{{ mensajeError }}</div>
+
+  <div *ngIf="authService.role() === 'Admin'" class="card">
+    <div class="card-header">
+      <h2>Registrar Nuevo Préstamo</h2>
+    </div>
     
-    <select [(ngModel)]="nuevoPrestamo.usuario" name="usuario" required>
-      <option value="" disabled>Selecciona un usuario</option>
-      <option *ngFor="let user of usuarios" [value]="user._id">
-        {{ user.nombre }} ({{ user.correo }})
-      </option>
-    </select>
+    <form class="card-body" [formGroup]="prestamoForm" (ngSubmit)="guardarPrestamo()">
+      <div class="form-grid">
 
-    <select [(ngModel)]="nuevoPrestamo.libro" name="libro" required>
-      <option value="" disabled>Selecciona un libro</option>
-      <option *ngFor="let libro of librosDisponibles" [value]="libro._id">
-        {{ libro.titulo }} ({{ libro.autor }})
-      </option>
-    </select>
-    
-    <input type="date" [(ngModel)]="nuevoPrestamo.fechaPrestamo" name="fechaPrestamo" required />
-    <input type="date" [(ngModel)]="nuevoPrestamo.fechaDevolucion" name="fechaDevolucion" />
-    <button type="submit" [disabled]="!puedeRegistrar">Registrar Préstamo</button>
-  </form>
+        <div class="form-group">
+          <label for="filtroUsuario">Buscar Usuario por RUT</label>
+          <div class="input-group">
+            <input type="text" id="filtroUsuario" class="form-control" 
+                   [formControl]="filtroUsuario" 
+                   placeholder="Ej: 12.345.678-9">
+            <button type="button" class="btn btn-secondary" (click)="buscarUsuario()">Buscar</button>
+          </div>
+          <div *ngIf="usuarioSeleccionado" class="selection-display">
+            ✅ {{ usuarioSeleccionado.nombre }} ({{ usuarioSeleccionado.situacion }})
+          </div>
+          <div *ngIf="f['usuarioId'].invalid && f['usuarioId'].touched" class="error-message">
+            Debe seleccionar un usuario.
+          </div>
+        </div>
 
-  <div *ngIf="nuevoPrestamo.usuario && !puedeRegistrar && esAdmin" class="mensaje-error-prestamo">
-    Este usuario tiene la situación "<b>{{ usuarioSeleccionado?.situacion }}</b>" y no puede registrar nuevos préstamos.
+        <div class="form-group">
+          <label for="filtroLibro">Buscar Libro por Título</label>
+          <div class="input-group">
+            <input type="text" id="filtroLibro" class="form-control" 
+                   [formControl]="filtroLibro" 
+                   placeholder="Ej: Cien Años de Soledad">
+            <button type="button" class="btn btn-secondary" (click)="buscarLibro()">Buscar</button>
+          </div>
+          <ul *ngIf="librosEncontrados.length > 0" class="search-results">
+            <li *ngFor="let libro of librosEncontrados" (click)="seleccionarLibro(libro)">
+              {{ libro.titulo }} ({{ libro.autor }}) - Disp: {{ libro.cantidad }}
+            </li>
+          </ul>
+          <div *ngIf="libroSeleccionado" class="selection-display">
+            ✅ {{ libroSeleccionado.titulo }} ({{ libroSeleccionado.autor }})
+          </div>
+          <div *ngIf="f['libroId'].invalid && f['libroId'].touched" class="error-message">
+            Debe seleccionar un libro.
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="fechaPrestamo">Fecha Préstamo</label>
+          <input type="date" id="fechaPrestamo" class="form-control" formControlName="fechaPrestamo" [readonly]="true">
+        </div>
+        <div class="form-group">
+          <label for="fechaDevolucion">Fecha Devolución</label>
+          <input type="date" id="fechaDevolucion" class="form-control" formControlName="fechaDevolucion"
+                 [class.is-invalid]="f['fechaDevolucion'].invalid && f['fechaDevolucion'].touched">
+          <div *ngIf="f['fechaDevolucion'].invalid && f['fechaDevolucion'].touched" class="error-message">
+            La fecha de devolución es obligatoria.
+          </div>
+        </div>
+
+      </div>
+
+      <button type="submit" class="btn btn-primary" [disabled]="prestamoForm.invalid">
+        Guardar Préstamo
+      </button>
+    </form>
   </div>
 
-  <table class="tabla">
-    <thead>
-      <tr>
-        <th *ngIf="esAdmin">Usuario</th>
-        <th>Libro</th>
-        <th>Préstamo</th>
-        <th>Devolución</th>
-        <th>Alerta</th>
-        <th *ngIf="esAdmin">Acciones</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr *ngFor="let prestamo of prestamos">
-        <td *ngIf="esAdmin">{{ prestamo.usuario.nombre }}</td> 
-        
-        <td>{{ prestamo.libro.titulo }}</td> 
-        
-        <td>{{ prestamo.fechaPrestamo | date:'shortDate' }}</td>
-        <td>{{ prestamo.fechaDevolucion | date:'shortDate' }}</td>
+  <div class="card">
+    <div class="card-header">
+      <h2>
+        {{ authService.role() === 'Admin' ? 'Préstamos Activos (Todos)' : 'Mis Préstamos Activos' }}
+      </h2>
+    </div>
+    
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table">
+          <thead>
+            <tr>
+              <th *ngIf="authService.role() === 'Admin'">Usuario</th>
+              <th *ngIf="authService.role() === 'Admin'">RUT</th>
+              <th>Libro</th>
+              <th>Autor</th>
+              <th>Fecha Préstamo</th>
+              <th>Fecha Devolución</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of prestamos">
+              <td *ngIf="authService.role() === 'Admin'">{{ p.usuario?.nombre }}</td>
+              <td *ngIf="authService.role() === 'Admin'">{{ p.usuario?.rut }}</td>
+              <td>{{ p.libro?.titulo }}</td>
+              <td>{{ p.libro?.autor }}</td>
+              <td>{{ p.fechaPrestamo | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ p.fechaDevolucion | date: 'dd/MM/yyyy' }}</td>
+              <td class="actions">
+                <button *ngIf="authService.role() === 'Admin'" class="btn btn-success" (click)="devolverLibro(p._id!)">
+                  Registrar Devolución
+                </button>
+                <span *ngIf="authService.role() === 'Usuario'">-</span>
+              </td>
+            </tr>
+            <tr *ngIf="prestamos.length === 0">
+              <td [attr.colspan]="authService.role() === 'Admin' ? 7 : 5" style="text-align: center;">
+                No hay préstamos activos.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
 
-        <td>
-          <span class="alerta-prestamo" 
-                [attr.data-estado]="calcularEstadoPrestamo(prestamo.fechaDevolucion)">
-            {{ calcularEstadoPrestamo(prestamo.fechaDevolucion) }}
-          </span>
-        </td>
-
-        <td *ngIf="esAdmin">
-          <button (click)="marcarDevuelto(prestamo)">Marcar devuelto</button>
-          <button (click)="eliminarPrestamo(prestamo)">Eliminar</button>
-        </td>
-      </tr>
-    </tbody>   
-  </table>
-</section>
+<style>
+  .input-group {
+    display: flex;
+  }
+  .input-group .form-control {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    flex-grow: 1;
+  }
+  .input-group .btn {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+  }
+  .search-results {
+    list-style: none;
+    padding: 0;
+    margin-top: 0.5rem;
+    border: 1px solid var(--color-borde);
+    border-radius: var(--border-radius);
+    max-height: 150px;
+    overflow-y: auto;
+  }
+  .search-results li {
+    padding: 0.75rem 1rem;
+    cursor: pointer;
+  }
+  .search-results li:hover {
+    background-color: var(--color-fondo);
+  }
+  .search-results li:not(:last-child) {
+    border-bottom: 1px solid var(--color-borde);
+  }
+  .selection-display {
+    margin-top: 0.75rem;
+    padding: 0.75rem 1rem;
+    background-color: #e6f7ff;
+    border: 1px solid #b3e0ff;
+    border-radius: var(--border-radius);
+    color: #0056b3;
+    font-weight: 500;
+  }
+</style>
