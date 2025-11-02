@@ -9,22 +9,24 @@ import { AuthService } from '../services/auth.service';
 })
 export class UsuarioService {
   private http = inject(HttpClient);
-  private authService = inject(AuthService); // Inyecta el AuthService
+  // private authService = inject(AuthService); // <-- 1. ELIMINA ESTA LÍNEA
   private apiUrl = 'https://backend-biblioteca-u4k0.onrender.com/api/usuarios';
+
+  // 2. AÑADE ESTE CONSTRUCTOR
+  constructor(private authService: AuthService) {}
 
   checkConnection(): Observable<any> {
     return this.http.get<any>('https://backend-biblioteca-u4k0.onrender.com/api/test/connection');
   }
 
   getUsuarioById(id: string): Observable<IUsuario> {
-    // Añade el token para proteger esta ruta
+    // No te preocupes, this.authService seguirá funcionando
     return this.http.get<IUsuario>(`${this.apiUrl}/${id}`, {
       headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }
     });
   }
 
   getUsuarios(): Observable<IUsuario[]> {
-    // Añade el token para proteger esta ruta
     return this.http.get<IUsuario[]>(this.apiUrl, {
       headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }
     });

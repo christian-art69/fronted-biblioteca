@@ -92,10 +92,10 @@
           </thead>
           <tbody>
             <tr *ngFor="let p of prestamos">
-              <td *ngIf="authService.role() === 'Admin'">{{ p.usuario?.nombre }}</td>
-              <td *ngIf="authService.role() === 'Admin'">{{ p.usuario?.rut }}</td>
-              <td>{{ p.libro?.titulo }}</td>
-              <td>{{ p.libro?.autor }}</td>
+              <td *ngIf="authService.role() === 'Admin'">{{ p.usuario.nombre }}</td>
+              <td *ngIf="authService.role() === 'Admin'">{{ p.usuario.rut }}</td>
+              <td>{{ p.libro.titulo }}</td>
+              <td>{{ p.libro.autor }}</td>
               <td>{{ p.fechaPrestamo | date: 'dd/MM/yyyy' }}</td>
               <td>{{ p.fechaDevolucion | date: 'dd/MM/yyyy' }}</td>
               <td class="actions">
