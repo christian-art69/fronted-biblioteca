@@ -1,3 +1,4 @@
+// CÓDIGO CORREGIDO Y ACTUALIZADO
 import { Injectable, signal, WritableSignal, Signal } from '@angular/core'; // Importamos Signals
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -28,7 +29,7 @@ export class AuthService {
   private currentUserSignal = signal<IUsuario | null>(null);
 
   // Exponemos Signals de solo lectura (públicos)
-  // Nota: Los nombres ya no terminan en '$'
+  // Los nombres públicos ya no terminan en '$'
   public isLoggedIn: Signal<boolean> = this.loggedInSignal.asReadonly();
   public role: Signal<'Admin' | 'Usuario' | null> = this.userRoleSignal.asReadonly();
   public userId: Signal<string | null> = this.userIdSignal.asReadonly();
