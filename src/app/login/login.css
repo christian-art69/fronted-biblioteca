@@ -1,0 +1,111 @@
+/* Estilos para el contenedor del login */
+.login-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh; /* Ocupa toda la altura de la vista */
+  padding: 2rem;
+}
+
+/* La "tarjeta" de login */
+.login-card {
+  width: 100%;
+  max-width: 420px;
+  padding: 2.5rem;
+  background-color: var(--color-superficie);
+  border-radius: var(--border-radius);
+  box-shadow: var(--sombra-card);
+  border-top: 4px solid var(--color-primario);
+}
+
+.login-card h2 {
+  text-align: center;
+  color: var(--color-primario);
+  margin-bottom: 0.5rem;
+  font-size: 2rem;
+}
+
+.login-card p {
+  text-align: center;
+  color: var(--color-texto-secundario);
+  margin-bottom: 2rem;
+}
+
+/* Estilo para los grupos de formulario */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  font-weight: 500;
+  margin-bottom: 0.5rem;
+}
+
+/* Estilo para los inputs */
+.form-control {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  border: 1px solid var(--color-borde);
+  border-radius: var(--border-radius);
+  transition: all 0.2s ease-in-out;
+}
+
+.form-control:focus {
+  outline: none;
+  border-color: var(--color-primario);
+  box-shadow: 0 0 0 3px rgba(0,123,255,0.15);
+}
+
+/* Estilo para el botón principal */
+.btn-primary {
+  width: 100%;
+  padding: 0.85rem 1rem;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  background-color: var(--color-primario);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+}
+
+.btn-primary:hover:not(:disabled) {
+  background-color: var(--color-primario-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0,123,255,0.2);
+}
+
+.btn-primary:disabled {
+  background-color: #a0cfff;
+  cursor: not-allowed;
+}
+
+/* Estilos para mensajes de error */
+.error-message {
+  color: var(--color-error);
+  font-size: 0.875rem;
+  margin-top: 0.25rem;
+}
+
+.error-api {
+  color: var(--color-error);
+  background-color: #f8d7da;
+  border: 1px solid #f5c6cb;
+  border-radius: var(--border-radius);
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+/* Estilo para inputs inválidos */
+.form-control.is-invalid {
+  border-color: var(--color-error);
+}
+
+.form-control.is-invalid:focus {
+  box-shadow: 0 0 0 3px rgba(220,53,69,0.15);
+}

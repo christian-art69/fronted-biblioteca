@@ -1,43 +1,37 @@
-/* RECOMENDADO: Añadir variables de color globales */
+/* Importar una fuente moderna desde Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 :root {
-  --color-primario: #F97316;
-  --color-fondo: #F97316;
-  --color-texto-principal: #FFFFFF;
-  --color-texto-secundario: #333333;
-  --color-superficie: #FFFFFF; /* Color de los paneles */
-  --color-borde: #ccc;
-  --color-borde-foco: #F97316;
-
-  --color-exito: #10B981;
-  --color-error: #EF4444;
-  --color-advertencia: #F59E0B;
-  --color-atrasado-texto: #efb344;
-  --color-bloqueado: #EF4444;
-  --color-activo: #3B82F6;
-  
-  --color-boton-principal: #1a1a1a;
-  --color-boton-principal-hover: #333;
-  --color-boton-secundario-hover: #e0e0e0;
-  
-  --color-fondo-tabla-header: #f7f7f7;
-  --color-fondo-tabla-hover: #f9f9f9;
-  --color-borde-tabla: #e0e0e0;
-
-  --sombra-panel: 0 8px 20px rgba(0, 0, 0, 0.15);
-  --radio-borde: 12px;
-  --radio-borde-input: 8px;
+  --color-primario: #007bff;
+  --color-primario-hover: #0056b3;
+  --color-fondo: #f4f7f6;
+  --color-superficie: #ffffff; /* Color para "tarjetas" */
+  --color-texto-principal: #333;
+  --color-texto-secundario: #555;
+  --color-borde: #dee2e6;
+  --color-error: #dc3545;
+  --color-exito: #28a745;
+  --sombra-card: 0 4px 12px rgba(0, 0, 0, 0.08);
+  --border-radius: 8px;
 }
 
+/* Reseteo básico y estilos globales */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
-html, body {
-  height: 100%;
-  font-family: 'Poppins', 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
-  /* Se usan las variables */
-  background-color: var(--color-fondo); 
+body {
+  font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background-color: var(--color-fondo);
   color: var(--color-texto-principal);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
 }

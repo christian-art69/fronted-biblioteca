@@ -1,4 +1,3 @@
-// CÓDIGO CORREGIDO Y ACTUALIZADO
 import { Injectable, signal, WritableSignal, Signal } from '@angular/core'; // Importamos Signals
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -21,7 +20,7 @@ interface JwtPayload {
 export class AuthService {
   private apiUrl = 'https://backend-biblioteca-u4k0.onrender.com/api/auth';
   
-  // --- CAMBIO A SIGNALS ---
+
   // Reemplazamos los BehaviorSubject por WritableSignal (privados)
   private loggedInSignal = signal<boolean>(this.hasToken());
   private userRoleSignal = signal<'Admin' | 'Usuario' | null>(null);
@@ -34,7 +33,7 @@ export class AuthService {
   public role: Signal<'Admin' | 'Usuario' | null> = this.userRoleSignal.asReadonly();
   public userId: Signal<string | null> = this.userIdSignal.asReadonly();
   public currentUser: Signal<IUsuario | null> = this.currentUserSignal.asReadonly();
-  // --- FIN DEL CAMBIO ---
+
 
   constructor(
     private router: Router,
