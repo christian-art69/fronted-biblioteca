@@ -1,4 +1,3 @@
-// CÓDIGO ACTUALIZADO
 import { Component, inject, Signal } from '@angular/core'; // Importa inject y Signal
 import { Router, RouterOutlet } from '@angular/router';
 import { AuthService } from './services/auth.service';

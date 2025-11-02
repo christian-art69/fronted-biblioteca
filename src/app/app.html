@@ -4,13 +4,13 @@
   </span>
 </div>
 
-<div class="container" *ngIf="authService.isLoggedIn$ | async">
+<div class="container" *ngIf="authService.isLoggedIn()">
   
   <header class="header">
     
     <h1>{{ title }}</h1>
 
-    <nav *ngIf="authService.role$ | async as role">
+    <nav *ngIf="authService.role() as role">
       <ng-container *ngIf="role === 'Admin'">
         <a routerLink="/libros" routerLinkActive="activo">Gestión Libros</a>
         <a routerLink="/usuarios" routerLinkActive="activo">Gestión Usuarios</a>
@@ -25,7 +25,7 @@
       <a (click)="logout()">Cerrar Sesión</a>
     </nav>     
 
-    <div class="user-info-widget" *ngIf="authService.currentUser$ | async as user">
+    <div class="user-info-widget" *ngIf="authService.currentUser() as user">
       <span class="user-name">{{ user.nombre }}</span>
       <span class="user-role">{{ user.rol }}</span>
       <span class="user-cargo">{{ user.cargo }}</span>
@@ -41,4 +41,4 @@
   </main>
 </div>
 
-<router-outlet *ngIf="!(authService.isLoggedIn$ | async)"></router-outlet>
+<router-outlet *ngIf="!authService.isLoggedIn()"></router-outlet>
