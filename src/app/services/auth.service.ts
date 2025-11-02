@@ -1,111 +1,68 @@
-import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
-import { BehaviorSubject } from 'rxjs';
+// CÓDIGO ACTUALIZADO
+import { Injectable, signal, WritableSignal, Signal } from '@angular/core'; // Importa 'signal', 'WritableSignal' y 'Signal'
 import { HttpClient } from '@angular/common/http';
-import { tap } from 'rxjs/operators';
-import { jwtDecode } from 'jwt-decode';
+import { Observable, tap } from 'rxjs'; // Ya no se necesita BehaviorSubject
+import { Usuario } from '../interfaces/usuario.interfaces';
 
-import { UsuarioService } from '../usuarios/usuario.service';
-import { IUsuario } from '../interfaces/usuario.interfaces';
-
-interface JwtPayload {
-  id: string;
-  rol: 'Admin' | 'Usuario';
-  iat: number;
-  exp: number;
-}
 @Injectable({
   providedIn: 'root'
 })
-
 export class AuthService {
-  private apiUrl = 'https://backend-biblioteca-u4k0.onrender.com/api/auth';
-  
-  private loggedIn = new BehaviorSubject<boolean>(this.hasToken());
-  private userRole = new BehaviorSubject<'Admin' | 'Usuario' | null>(null);
-  private userId = new BehaviorSubject<string | null>(null);
-  private currentUser = new BehaviorSubject<IUsuario | null>(null);
-  public currentUser$ = this.currentUser.asObservable();
+  private baseUrl = 'https://backend-biblioteca-u4k0.onrender.com';
 
-  isLoggedIn$ = this.loggedIn.asObservable();
-  role$ = this.userRole.asObservable();
+  // --- Reemplaza BehaviorSubject por signal() ---
+  private loggedInSignal: WritableSignal<boolean> = signal(this.hasToken());
+  private userRoleSignal: WritableSignal<string | null> = signal(this.getRole());
 
-  constructor(
-    private router: Router,
-    private http: HttpClient,
-    private usuarioService: UsuarioService
-  ) {
-    this.checkTokenAndSetRole();
-  }
+  // --- Expone señales de solo lectura (Readonly) ---
+  public isLoggedIn: Signal<boolean> = this.loggedInSignal.asReadonly();
+  public userRole: Signal<string | null> = this.userRoleSignal.asReadonly();
 
-  private checkTokenAndSetRole(): void {
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const decoded = jwtDecode<JwtPayload>(token);
-        if (decoded.exp * 1000 > Date.now()) {
-          this.loggedIn.next(true);
-          this.userRole.next(decoded.rol);
-          this.userId.next(decoded.id);
+  constructor(private http: HttpClient) { }
 
-          this.fetchAndSetCurrentUser(decoded.id);
-
-        } else {
-          this.logout();
+  login(usuario: string, clave: string): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/login`, { usuario, clave }).pipe(
+      tap(response => {
+        if (response && response.token) {
+          localStorage.setItem('token', response.token);
+          localStorage.setItem('role', response.role);
+          localStorage.setItem('userId', response.userId); 
+          
+          // --- Reemplaza .next() por .set() ---
+          this.loggedInSignal.set(true);
+          this.userRoleSignal.set(response.role);
         }
-      } catch (error) {
-        this.logout();
-      }
-    }
+      })
+    );
   }
 
-  private hasToken(): boolean {
+  logout(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
+    localStorage.removeItem('userId'); 
+    
+    // --- Reemplaza .next() por .set() ---
+    this.loggedInSignal.set(false);
+    this.userRoleSignal.set(null);
+  }
+
+  hasToken(): boolean {
     return !!localStorage.getItem('token');
   }
 
-  private fetchAndSetCurrentUser(id: string) {
-    this.usuarioService.getUsuarioById(id).subscribe({
-      next: (usuario) => {
-        this.currentUser.next(usuario);
-      },
-      error: (err) => {
-        console.error("No se pudo cargar la info del usuario, cerrando sesión.", err);
-        this.logout(); 
-      }
-    });
-  }
-
-  login(loginIdentifier: string, password: string) {
-    
-    return this.http.post<{ token: string }>(`${this.apiUrl}/login`, { loginIdentifier, password })
-      .pipe(
-        tap(response => {
-          localStorage.setItem('token', response.token);
-          const decoded = jwtDecode<JwtPayload>(response.token);
-          this.loggedIn.next(true);
-          this.userRole.next(decoded.rol);
-          this.userId.next(decoded.id);
-          this.router.navigate(['/libros']);
-
-          this.fetchAndSetCurrentUser(decoded.id);
-        })
-      );
-  }
-
-  logout() {
-    localStorage.removeItem('token');
-    this.loggedIn.next(false);
-    this.userRole.next(null);
-    this.userId.next(null);
-    this.currentUser.next(null);
-    this.router.navigate(['/login']);
-  }
-  
-  getRole(): 'Admin' | 'Usuario' | null {
-    return this.userRole.value;
+  getRole(): string | null {
+    return localStorage.getItem('role');
   }
 
   getUserId(): string | null {
-    return this.userId.value;
+    return localStorage.getItem('userId');
+  }
+
+  getToken(): string | null {
+    return localStorage.getItem('token');
+  }
+
+  register(usuario: Usuario): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/usuarios`, usuario);
   }
 }

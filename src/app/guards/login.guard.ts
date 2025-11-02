@@ -1,21 +1,18 @@
-// src/app/guards/login.guard.ts
+// CÓDIGO ACTUALIZADO
 import { inject } from '@angular/core';
-import { Router, CanActivateFn } from '@angular/router';
+import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
-import { map } from 'rxjs';
+// Ya no se necesitan 'map' ni 'take' de 'rxjs/operators'
 
 export const loginGuard: CanActivateFn = (route, state) => {
   const authService = inject(AuthService);
   const router = inject(Router);
 
-  return authService.isLoggedIn$.pipe(
-    map(isLoggedIn => {
-      if (!isLoggedIn) {
-        return true; // Si NO está logueado, puede ver el login
-      } else {
-        router.navigate(['/libros']); // Si YA está logueado, lo mandamos a /libros
-        return false;
-      }
-    })
-  );
-}
+  // Lee la señal directamente
+  if (authService.isLoggedIn()) {
+    router.navigate(['/libros']); // Redirige a /libros si ya está logueado
+    return false;
+  } else {
+    return true; // Permite acceso a /login si no está logueado
+  }
+};

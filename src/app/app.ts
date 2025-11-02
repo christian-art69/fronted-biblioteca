@@ -1,41 +1,30 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
-import { RouterLinkWithHref, RouterOutlet } from '@angular/router';
+// CÓDIGO ACTUALIZADO
+import { Component, inject, Signal } from '@angular/core'; // Importa inject y Signal
+import { Router, RouterOutlet } from '@angular/router';
 import { AuthService } from './services/auth.service';
-import { UsuarioService } from './usuarios/usuario.service';
+import { CommonModule } from '@angular/common';
+// Ya no se necesita Observable
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, RouterOutlet, RouterLinkWithHref],
+  imports: [RouterOutlet, CommonModule],
   templateUrl: './app.html',
-  styleUrls: ['./app.css']
+  styleUrl: './app.css'
 })
-export class App implements OnInit {
-  title = 'Sistema de Gestion Biblioteca';
-  isConnected = false;
+export class AppComponent {
+  // Inyecta los servicios de forma moderna
+  private authService = inject(AuthService);
+  private router = inject(Router);
 
-  constructor(
-    public authService: AuthService,
-    private usuarioService: UsuarioService
-  ) {}
+  // Asigna las señales directamente
+  isLoggedIn: Signal<boolean> = this.authService.isLoggedIn;
+  userRole: Signal<string | null> = this.authService.userRole;
 
-  ngOnInit() {
-    this.checkConnection();
-  }
+  // El constructor ya no es necesario para la inyección
 
-  logout() {
+  logout(): void {
     this.authService.logout();
-  }
-
-  checkConnection() {
-    this.usuarioService.checkConnection().subscribe({
-      next: () => {
-        this.isConnected = true;
-      },
-      error: () => {
-        this.isConnected = false;
-      }
-    });
+    this.router.navigate(['/login']);
   }
 }
