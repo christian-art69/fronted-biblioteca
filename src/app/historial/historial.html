@@ -22,10 +22,10 @@
           </thead>
           <tbody>
             <tr *ngFor="let h of historial">
-              <td *ngIf="authService.role() === 'Admin'">{{ h.usuario?.nombre }}</td>
-              <td *ngIf="authService.role() === 'Admin'">{{ h.usuario?.rut }}</td>
-              <td>{{ h.libro?.titulo }}</td>
-              <td>{{ h.libro?.autor }}</td>
+              <td *ngIf="authService.role() === 'Admin'">{{ h.usuario.nombre }}</td>
+              <td *ngIf="authService.role() === 'Admin'">{{ h.usuario.rut }}</td>
+              <td>{{ h.libro.titulo }}</td>
+              <td>{{ h.libro.autor }}</td>
               <td>{{ h.fechaPrestamo | date: 'dd/MM/yyyy' }}</td>
               <td>{{ h.fechaDevolucion | date: 'dd/MM/yyyy' }}</td>
               <td>

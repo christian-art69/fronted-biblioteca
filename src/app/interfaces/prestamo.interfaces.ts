@@ -9,6 +9,7 @@ export interface IPrestamo {
   fechaDevolucion?: string | Date;
   createdAt?: string | Date;
   updatedAt?: string | Date;
+  estado?: 'Prestado' | 'Devuelto';
 }
 
 export interface ICrearPrestamo {

@@ -1,44 +1,55 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { IUsuario, ICrearUsuario } from '../interfaces/usuario.interfaces';
+import { IUsuario } from '../interfaces/usuario.interfaces';
+import { AuthService } from '../services/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class UsuarioService {
+  private http = inject(HttpClient);
+  private authService = inject(AuthService); // Inyecta el AuthService
   private apiUrl = 'https://backend-biblioteca-u4k0.onrender.com/api/usuarios';
-  
-  private healthUrl = 'https://backend-biblioteca-u4k0.onrender.com/api/health';
 
-
-  constructor(private http: HttpClient) { }
-
-  getUsuarios(searchTerm: string = ''): Observable<IUsuario[]> {
-    let params = new HttpParams();
-    if (searchTerm) {
-      params = params.set('search', searchTerm);
-    }
-    return this.http.get<IUsuario[]>(this.apiUrl, { params: params });
+  checkConnection(): Observable<any> {
+    return this.http.get<any>('https://backend-biblioteca-u4k0.onrender.com/api/test/connection');
   }
 
   getUsuarioById(id: string): Observable<IUsuario> {
-    return this.http.get<IUsuario>(`${this.apiUrl}/${id}`);
+    // Añade el token para proteger esta ruta
+    return this.http.get<IUsuario>(`${this.apiUrl}/${id}`, {
+      headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }
+    });
   }
 
-  registrarUsuario(usuario: ICrearUsuario): Observable<IUsuario> {
-    return this.http.post<IUsuario>(this.apiUrl, usuario);
+  getUsuarios(): Observable<IUsuario[]> {
+    // Añade el token para proteger esta ruta
+    return this.http.get<IUsuario[]>(this.apiUrl, {
+      headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }
+    });
   }
 
-  updateUsuario(id: string, cambios: Partial<IUsuario> & { password?: string }): Observable<IUsuario> {
-    return this.http.put<IUsuario>(`${this.apiUrl}/${id}`, cambios);
+  // --- 1. AÑADE TODOS ESTOS MÉTODOS NUEVOS ---
+
+  // Método para buscar usuario por RUT (para prestamos.ts)
+  getUsuarioPorRut(rut: string): Observable<IUsuario> {
+    return this.http.get<IUsuario>(`${this.apiUrl}/rut/${rut}`, {
+      headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }
+    });
   }
 
-  eliminarUsuario(id: string): Observable<any> {
-    return this.http.delete(`${this.apiUrl}/${id}`);
+  // Método para actualizar un usuario
+  updateUsuario(id: string, usuario: IUsuario): Observable<IUsuario> {
+    return this.http.put<IUsuario>(`${this.apiUrl}/${id}`, usuario, {
+      headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }
+    });
   }
 
-  checkConnection(): Observable<any> {
-    return this.http.get(this.healthUrl);
+  // Método para eliminar un usuario
+  deleteUsuario(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/${id}`, {
+      headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }
+    });
   }
 }

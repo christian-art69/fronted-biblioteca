@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// 1. Importa ReactiveFormsModule
-import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
+// 1. Importa FormsModule y ReactiveFormsModule
+import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { IUsuario } from '../interfaces/usuario.interfaces';
 import { UsuarioService } from './usuario.service';
@@ -10,18 +10,16 @@ import { AuthService } from '../services/auth.service';
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  // 2. Añade ReactiveFormsModule
-  imports: [CommonModule, HttpClientModule, ReactiveFormsModule],
+  // 2. Añade FormsModule
+  imports: [CommonModule, HttpClientModule, FormsModule, ReactiveFormsModule],
   templateUrl: './usuarios.html',
-  // 3. Importa el CSS de gestión
   styleUrls: ['../panel-gestion.css']
 })
 export class Usuarios implements OnInit {
 
-  // 4. Inyecta servicios y FormBuilder
   private fb = inject(FormBuilder);
   private usuarioService = inject(UsuarioService);
-  private authService = inject(AuthService); // Lo usamos para el token
+  private authService = inject(AuthService);
 
   usuarios: IUsuario[] = [];
   filtro: string = '';
@@ -34,18 +32,16 @@ export class Usuarios implements OnInit {
   public mensajeError: string | null = null;
   public mensajeExito: string | null = null;
 
-  // Opciones para los <select>
   roles = ['Admin', 'Usuario'];
   cargos = ['Estudiante', 'Docente', 'Bibliotecario', 'Administrativo'];
   situaciones = ['Vigente', 'Atrasado', 'Bloqueado', 'Prestamo Activo'];
 
-  // 5. Define el formulario reactivo con validadores
   constructor() {
     this.usuarioForm = this.fb.group({
       nombre: ['', [Validators.required, Validators.minLength(3)]],
       correo: ['', [Validators.required, Validators.email]],
       rut: ['', [Validators.required, Validators.pattern(/^\d{1,2}\.\d{3}\.\d{3}-[\dkK]$/)]],
-      password: ['', [Validators.minLength(6)]], // Opcional al editar, requerido al crear
+      password: ['', [Validators.minLength(6)]],
       rol: ['Usuario', [Validators.required]],
       cargo: ['Estudiante', [Validators.required]],
       situacion: ['Vigente', [Validators.required]]
@@ -56,18 +52,18 @@ export class Usuarios implements OnInit {
     this.cargarUsuarios();
   }
 
-  // 6. Helper para los controles del formulario
   get f() {
     return this.usuarioForm.controls;
   }
 
   cargarUsuarios(): void {
+    // 3. Añade tipo 'any' a 'data' y 'err'
     this.usuarioService.getUsuarios().subscribe({
-      next: (data) => {
+      next: (data: any) => {
         this.usuarios = data;
         this.filtrarUsuarios();
       },
-      error: (err) => this.mensajeError = 'Error al cargar los usuarios.'
+      error: (err: any) => this.mensajeError = 'Error al cargar los usuarios.'
     });
   }
 
@@ -88,7 +84,6 @@ export class Usuarios implements OnInit {
       cargo: 'Estudiante',
       situacion: 'Vigente'
     });
-    // 7. La contraseña es requerida solo al crear
     this.f['password'].setValidators([Validators.required, Validators.minLength(6)]);
     this.f['password'].updateValueAndValidity();
     this.mensajeError = null;
@@ -102,14 +97,12 @@ export class Usuarios implements OnInit {
     this.mensajeError = null;
     this.mensajeExito = null;
 
-    // 8. La contraseña es opcional al editar
     this.f['password'].clearValidators();
     this.f['password'].setValidators([Validators.minLength(6)]);
     this.f['password'].updateValueAndValidity();
 
-    // 9. Carga los datos en el formulario
     this.usuarioForm.patchValue(usuario);
-    this.f['password'].setValue(''); // No mostrar la contraseña hasheada
+    this.f['password'].setValue('');
   }
 
   cerrarModal(): void {
@@ -127,42 +120,42 @@ export class Usuarios implements OnInit {
     this.mensajeExito = null;
     let usuarioData = { ...this.usuarioForm.value };
 
-    // 10. No enviar la contraseña si está vacía en modo edición
     if (this.esModoEdicion && !usuarioData.password) {
       delete usuarioData.password;
     }
 
     if (this.esModoEdicion && this.usuarioActualId) {
-      // Modo Edición
+      // 4. Añade tipo 'any' a 'err'
       this.usuarioService.updateUsuario(this.usuarioActualId, usuarioData).subscribe({
         next: () => {
           this.mensajeExito = 'Usuario actualizado correctamente.';
           this.cargarUsuarios();
           this.cerrarModal();
         },
-        error: (err) => this.mensajeError = `Error al actualizar: ${err.error?.message || 'Verifique los datos.'}`
+        error: (err: any) => this.mensajeError = `Error al actualizar: ${err.error?.message || 'Verifique los datos.'}`
       });
     } else {
-      // Modo Creación
-      this.authService.register(usuarioData).subscribe({ // Usa el register del authService
+      // 5. Añade tipo 'any' a 'err'
+      this.authService.register(usuarioData).subscribe({
         next: () => {
           this.mensajeExito = 'Usuario registrado correctamente.';
           this.cargarUsuarios();
           this.cerrarModal();
         },
-        error: (err) => this.mensajeError = `Error al registrar: ${err.error?.message || 'Verifique los datos.'}`
+        error: (err: any) => this.mensajeError = `Error al registrar: ${err.error?.message || 'Verifique los datos.'}`
       });
     }
   }
 
   eliminarUsuario(id: string): void {
     if (confirm('¿Está seguro de que desea eliminar este usuario?')) {
+      // 6. Añade tipo 'any' a 'err'
       this.usuarioService.deleteUsuario(id).subscribe({
         next: () => {
           this.mensajeExito = 'Usuario eliminado correctamente.';
           this.cargarUsuarios();
         },
-        error: (err) => this.mensajeError = 'Error al eliminar el usuario.'
+        error: (err: any) => this.mensajeError = 'Error al eliminar el usuario.'
       });
     }
   }

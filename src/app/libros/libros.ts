@@ -1,27 +1,25 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// Importa ReactiveFormsModule, FormBuilder, Validators y FormGroup
-import { ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
+// 1. Importa FormsModule (para el filtro) y ReactiveFormsModule (para el modal)
+import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ILibro } from '../interfaces/libro.interfaces';
 import { LibroService } from './libros.service';
-import { AuthService } from '../services/auth.service'; // Importar AuthService
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-libros',
   standalone: true,
-  // 1. Añade ReactiveFormsModule
-  imports: [CommonModule, HttpClientModule, ReactiveFormsModule],
+  // 2. Añade FormsModule
+  imports: [CommonModule, HttpClientModule, FormsModule, ReactiveFormsModule],
   templateUrl: './libros.html',
-  // 2. Importa el CSS de gestión
   styleUrls: ['../panel-gestion.css'] 
 })
 export class Libros implements OnInit {
 
-  // 3. Inyecta FormBuilder y servicios
   private fb = inject(FormBuilder);
   private libroService = inject(LibroService);
-  public authService = inject(AuthService); // Público para usarlo en el template
+  public authService = inject(AuthService);
 
   libros: ILibro[] = [];
   filtro: string = '';
@@ -34,7 +32,6 @@ export class Libros implements OnInit {
   public mensajeError: string | null = null;
   public mensajeExito: string | null = null;
   
-  // 4. Define el formulario reactivo
   constructor() {
     this.libroForm = this.fb.group({
       titulo: ['', [Validators.required, Validators.minLength(3)]],
@@ -49,18 +46,18 @@ export class Libros implements OnInit {
     this.cargarLibros();
   }
 
-  // 5. Helper para acceder a los controles del formulario
   get f() {
     return this.libroForm.controls;
   }
 
   cargarLibros(): void {
+    // 3. Añade tipo 'any' a 'data' y 'err'
     this.libroService.getLibros().subscribe({
-      next: (data) => {
+      next: (data: any) => {
         this.libros = data;
         this.filtrarLibros();
       },
-      error: (err) => this.mensajeError = 'Error al cargar los libros.'
+      error: (err: any) => this.mensajeError = 'Error al cargar los libros.'
     });
   }
 
@@ -87,7 +84,6 @@ export class Libros implements OnInit {
     this.libroActualId = libro._id ?? null;
     this.mensajeError = null;
     this.mensajeExito = null;
-    // 6. Usa patchValue para cargar datos en el formulario
     this.libroForm.patchValue(libro);
   }
 
@@ -96,10 +92,9 @@ export class Libros implements OnInit {
     this.libroActualId = null;
   }
 
-  // 7. guardarLibro ahora usa el formulario reactivo
   guardarLibro(): void {
     if (this.libroForm.invalid) {
-      this.libroForm.markAllAsTouched(); // Muestra errores si se intenta guardar
+      this.libroForm.markAllAsTouched();
       return;
     }
 
@@ -108,36 +103,37 @@ export class Libros implements OnInit {
     const libroData = this.libroForm.value;
 
     if (this.esModoEdicion && this.libroActualId) {
-      // Modo Edición
+      // 4. Añade tipo 'any' a 'err'
       this.libroService.updateLibro(this.libroActualId, libroData).subscribe({
         next: () => {
           this.mensajeExito = 'Libro actualizado correctamente.';
           this.cargarLibros();
           this.cerrarModal();
         },
-        error: (err) => this.mensajeError = 'Error al actualizar el libro.'
+        error: (err: any) => this.mensajeError = 'Error al actualizar el libro.'
       });
     } else {
-      // Modo Creación
+      // 5. Añade tipo 'any' a 'err'
       this.libroService.addLibro(libroData).subscribe({
         next: () => {
           this.mensajeExito = 'Libro agregado correctamente.';
           this.cargarLibros();
           this.cerrarModal();
         },
-        error: (err) => this.mensajeError = 'Error al agregar el libro.'
+        error: (err: any) => this.mensajeError = 'Error al agregar el libro.'
       });
     }
   }
 
   eliminarLibro(id: string): void {
     if (confirm('¿Está seguro de que desea eliminar este libro?')) {
+      // 6. Añade tipo 'any' a 'err'
       this.libroService.deleteLibro(id).subscribe({
         next: () => {
           this.mensajeExito = 'Libro eliminado correctamente.';
           this.cargarLibros();
         },
-        error: (err) => this.mensajeError = 'Error al eliminar el libro.'
+        error: (err: any) => this.mensajeError = 'Error al eliminar el libro.'
       });
     }
   }
