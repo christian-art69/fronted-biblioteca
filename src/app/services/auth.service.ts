@@ -1,11 +1,12 @@
-import { Injectable, signal, WritableSignal, Signal, inject } from '@angular/core';
+// src/app/services/auth.service.ts
+import { Injectable, signal, WritableSignal, Signal, inject, Injector } from '@angular/core'; // 1. IMPORTA INJECTOR
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs'; // Importa Observable
+import { Observable, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 
 import { UsuarioService } from '../usuarios/usuario.service';
-import { IUsuario } from '../interfaces/usuario.interfaces'; // Importa IUsuario
+import { IUsuario } from '../interfaces/usuario.interfaces';
 
 interface JwtPayload {
   id: string;
@@ -16,10 +17,9 @@ interface JwtPayload {
 @Injectable({
   providedIn: 'root'
 })
-
 export class AuthService {
   private apiUrl = 'https://backend-biblioteca-u4k0.onrender.com/api/auth';
-  
+
   private loggedInSignal = signal<boolean>(this.hasToken());
   private userRoleSignal = signal<'Admin' | 'Usuario' | null>(null);
   private userIdSignal = signal<string | null>(null);
@@ -32,7 +32,21 @@ export class AuthService {
 
   private router = inject(Router);
   private http = inject(HttpClient);
-  private usuarioService = inject(UsuarioService);
+  
+  // 2. ELIMINA el inject directo de UsuarioService
+  // private usuarioService = inject(UsuarioService); 
+  
+  // 3. INYECTA el Injector
+  private injector = inject(Injector);
+  private _usuarioService: UsuarioService | undefined;
+
+  // 4. CREA un getter "lazy" para el UsuarioService
+  private get usuarioService(): UsuarioService {
+    if (!this._usuarioService) {
+      this._usuarioService = this.injector.get(UsuarioService);
+    }
+    return this._usuarioService;
+  }
 
   constructor() {
     this.checkTokenAndSetRole();
@@ -62,13 +76,14 @@ export class AuthService {
   }
 
   private fetchAndSetCurrentUser(id: string) {
+    // 5. Ahora esto usará el getter LAZY, rompiendo el bucle
     this.usuarioService.getUsuarioById(id).subscribe({
-      next: (usuario: IUsuario) => { // <-- Tipado añadido
+      next: (usuario: IUsuario) => {
         this.currentUserSignal.set(usuario);
       },
-      error: (err: any) => { // <-- Tipado añadido
+      error: (err: any) => {
         console.error("No se pudo cargar la info del usuario, cerrando sesión.", err);
-        this.logout(); 
+        this.logout();
       }
     });
   }
@@ -76,10 +91,10 @@ export class AuthService {
   login(loginIdentifier: string, password: string) {
     return this.http.post<{ token: string }>(`${this.apiUrl}/login`, { loginIdentifier, password })
       .pipe(
-        tap((response: { token: string }) => { // <-- Tipado añadido
+        tap((response: { token: string }) => {
           localStorage.setItem('token', response.token);
           const decoded = jwtDecode<JwtPayload>(response.token);
-          
+
           this.loggedInSignal.set(true);
           this.userRoleSignal.set(decoded.rol);
           this.userIdSignal.set(decoded.id);
@@ -98,7 +113,7 @@ export class AuthService {
     this.currentUserSignal.set(null);
     this.router.navigate(['/login']);
   }
-  
+
   getRole(): 'Admin' | 'Usuario' | null {
     return this.userRoleSignal();
   }
@@ -107,13 +122,11 @@ export class AuthService {
     return this.userIdSignal();
   }
 
-  getToken(): string | null { // <-- AÑADIDO (necesario para otros servicios)
+  getToken(): string | null {
     return localStorage.getItem('token');
   }
 
-  // 1. AÑADE ESTE MÉTODO QUE FALTABA
   register(usuario: IUsuario): Observable<any> {
-    // Apunta a la ruta de registro de usuarios, no de auth
     const registerUrl = this.apiUrl.replace('/auth', '/usuarios/register');
     return this.http.post<any>(registerUrl, usuario);
   }
