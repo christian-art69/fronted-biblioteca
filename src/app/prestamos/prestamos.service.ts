@@ -13,7 +13,7 @@ export class PrestamoService {
   private apiUrl = 'https://backend-biblioteca-kftz.onrender.com/api/prestamos';
   
   getPrestamos(): Observable<IPrestamo[]> {
-    return this.http.get<IPrestamo[]>(this.apiUrl, {
+    return this.http.get<IPrestamo[]>(`${this.apiUrl}/mis-prestamos`, {
       headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }
     });
   }
