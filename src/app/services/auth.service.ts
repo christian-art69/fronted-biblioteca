@@ -16,8 +16,7 @@ interface JwtPayload {
   providedIn: 'root'
 })
 export class AuthService {
-  private apiUrl = 'https://backend-biblioteca-u4k0.onrender.com/api/auth';
-
+ private apiUrl = 'https://backend-biblioteca-kftz.onrender.com/api/auth';
   private loggedInSignal = signal<boolean>(this.hasToken());
   private userRoleSignal = signal<'Admin' | 'Usuario' | null>(null);
   private userIdSignal = signal<string | null>(null);

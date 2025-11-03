@@ -10,7 +10,7 @@ import { AuthService } from '../services/auth.service';
 export class PrestamoService {
   private http = inject(HttpClient);
   private authService = inject(AuthService);
-  private apiUrl = 'https://backend-biblioteca-u4k0.onrender.com/api/prestamos';
+  private apiUrl = 'https://backend-biblioteca-kftz.onrender.com/api/auth';
   
   getPrestamos(): Observable<IPrestamo[]> {
     return this.http.get<IPrestamo[]>(this.apiUrl, {
