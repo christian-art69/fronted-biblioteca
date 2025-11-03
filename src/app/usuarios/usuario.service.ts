@@ -10,10 +10,10 @@ import { AuthService } from '../services/auth.service';
 export class UsuarioService {
   private http = inject(HttpClient);
   private authService = inject(AuthService); 
-  private apiUrl = 'https://backend-biblioteca-kftz.onrender.com/api/auth';
+  private apiUrl = 'https://backend-biblioteca-kftz.onrender.com/api/usuarios';
 
   checkConnection(): Observable<any> {
-    return this.http.get<any>('https://backend-biblioteca-kftz.onrender.com/api/auth');
+    return this.http.get<any>('https://backend-biblioteca-kftz.onrender.com/api/test/connection');
   }
 
   getUsuarioById(id: string): Observable<IUsuario> {

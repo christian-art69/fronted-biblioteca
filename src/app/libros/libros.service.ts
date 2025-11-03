@@ -10,7 +10,7 @@ import { AuthService } from '../services/auth.service';
 export class LibroService {
   private http = inject(HttpClient);
   private authService = inject(AuthService); 
- private apiUrl = 'https://backend-biblioteca-kftz.onrender.com/api/auth';
+  private apiUrl = 'https://backend-biblioteca-kftz.onrender.com/api/libros';
 
   getLibros(): Observable<ILibro[]> {
     return this.http.get<ILibro[]>(this.apiUrl);
