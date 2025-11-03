@@ -1,6 +1,4 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-// CORREGIDO: La importación apuntaba a '.service.ts' en lugar de al componente
 import { Prestamos } from './prestamos';
 
 describe('Prestamos', () => {

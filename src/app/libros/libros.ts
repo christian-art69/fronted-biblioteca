@@ -1,6 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// 1. Importa FormsModule (para el filtro) y ReactiveFormsModule (para el modal)
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { ILibro } from '../interfaces/libro.interfaces';
@@ -10,7 +9,6 @@ import { AuthService } from '../services/auth.service';
 @Component({
   selector: 'app-libros',
   standalone: true,
-  // 2. Añade FormsModule
   imports: [CommonModule, HttpClientModule, FormsModule, ReactiveFormsModule],
   templateUrl: './libros.html',
   styleUrls: ['../panel-gestion.css'] 
@@ -51,7 +49,6 @@ export class Libros implements OnInit {
   }
 
   cargarLibros(): void {
-    // 3. Añade tipo 'any' a 'data' y 'err'
     this.libroService.getLibros().subscribe({
       next: (data: any) => {
         this.libros = data;
@@ -103,7 +100,6 @@ export class Libros implements OnInit {
     const libroData = this.libroForm.value;
 
     if (this.esModoEdicion && this.libroActualId) {
-      // 4. Añade tipo 'any' a 'err'
       this.libroService.updateLibro(this.libroActualId, libroData).subscribe({
         next: () => {
           this.mensajeExito = 'Libro actualizado correctamente.';
@@ -113,7 +109,6 @@ export class Libros implements OnInit {
         error: (err: any) => this.mensajeError = 'Error al actualizar el libro.'
       });
     } else {
-      // 5. Añade tipo 'any' a 'err'
       this.libroService.addLibro(libroData).subscribe({
         next: () => {
           this.mensajeExito = 'Libro agregado correctamente.';
@@ -127,7 +122,6 @@ export class Libros implements OnInit {
 
   eliminarLibro(id: string): void {
     if (confirm('¿Está seguro de que desea eliminar este libro?')) {
-      // 6. Añade tipo 'any' a 'err'
       this.libroService.deleteLibro(id).subscribe({
         next: () => {
           this.mensajeExito = 'Libro eliminado correctamente.';

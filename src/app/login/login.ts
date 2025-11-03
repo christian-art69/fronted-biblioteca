@@ -10,11 +10,9 @@ import { AuthService } from '../services/auth.service';
   standalone: true,
   imports: [CommonModule, HttpClientModule, ReactiveFormsModule], 
   templateUrl: './login.html',
-  // 1. Añade esta línea para los estilos
   styleUrls: ['./login.css']
 })
 export class Login {
-  // ... (el resto de tu lógica está bien)
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
@@ -40,7 +38,6 @@ export class Login {
 
     this.authService.login(loginIdentifier, password).subscribe({
       next: () => {
-        // El servicio maneja la redirección
       },
       error: (err) => {
         console.error('Error de login:', err);

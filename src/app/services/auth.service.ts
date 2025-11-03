@@ -1,4 +1,3 @@
-// src/app/services/auth.service.ts
 import { Injectable, signal, WritableSignal, Signal, inject, Injector } from '@angular/core'; // 1. IMPORTA INJECTOR
 import { Router } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
@@ -32,15 +31,8 @@ export class AuthService {
 
   private router = inject(Router);
   private http = inject(HttpClient);
-  
-  // 2. ELIMINA el inject directo de UsuarioService
-  // private usuarioService = inject(UsuarioService); 
-  
-  // 3. INYECTA el Injector
   private injector = inject(Injector);
   private _usuarioService: UsuarioService | undefined;
-
-  // 4. CREA un getter "lazy" para el UsuarioService
   private get usuarioService(): UsuarioService {
     if (!this._usuarioService) {
       this._usuarioService = this.injector.get(UsuarioService);
@@ -76,7 +68,6 @@ export class AuthService {
   }
 
   private fetchAndSetCurrentUser(id: string) {
-    // 5. Ahora esto usará el getter LAZY, rompiendo el bucle
     this.usuarioService.getUsuarioById(id).subscribe({
       next: (usuario: IUsuario) => {
         this.currentUserSignal.set(usuario);

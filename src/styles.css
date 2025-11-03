@@ -5,7 +5,7 @@
   --color-primario: #007bff;
   --color-primario-hover: #0056b3;
   --color-fondo: #f4f7f6;
-  --color-superficie: #ffffff; /* Color para "tarjetas" */
+  --color-superficie: #ffffff; 
   --color-texto-principal: #333;
   --color-texto-secundario: #555;
   --color-borde: #dee2e6;
@@ -15,7 +15,6 @@
   --border-radius: 8px;
 }
 
-/* Reseteo básico y estilos globales */
 * {
   box-sizing: border-box;
   margin: 0;

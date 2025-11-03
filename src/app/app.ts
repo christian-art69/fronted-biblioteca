@@ -11,12 +11,12 @@ import { UsuarioService } from './usuarios/usuario.service';
   templateUrl: './app.html',
   styleUrls: ['./app.css']
 })
-export class App implements OnInit { // Asegúrate que tu clase se llame 'App' como en el original
+export class App implements OnInit { 
   title = 'Sistema de Gestion Biblioteca';
   isConnected = false;
 
   constructor(
-    public authService: AuthService, // <-- Debe ser 'public' para que el HTML pueda verlo
+    public authService: AuthService, 
     private usuarioService: UsuarioService
   ) {}
 

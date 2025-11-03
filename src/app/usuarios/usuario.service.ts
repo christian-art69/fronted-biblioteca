@@ -1,4 +1,3 @@
-// src/app/usuarios/usuario.service.ts
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -10,10 +9,8 @@ import { AuthService } from '../services/auth.service';
 })
 export class UsuarioService {
   private http = inject(HttpClient);
-  private authService = inject(AuthService); // <-- Déjalo así
+  private authService = inject(AuthService); 
   private apiUrl = 'https://backend-biblioteca-u4k0.onrender.com/api/usuarios';
-
-  // SIN CONSTRUCTOR
 
   checkConnection(): Observable<any> {
     return this.http.get<any>('https://backend-biblioteca-u4k0.onrender.com/api/test/connection');

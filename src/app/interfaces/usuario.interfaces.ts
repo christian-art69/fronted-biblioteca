@@ -1,5 +1,3 @@
-// src/app/interfaces/usuario.interfaces.ts
-
 export interface IUsuario {
   _id: string;
   nombre: string;
@@ -15,6 +13,6 @@ export interface ICrearUsuario {
   correo: string;
   rut: string;
   rol: 'Usuario' | 'Admin';
-  password?: string; // Es opcional al crear
+  password?: string;
   cargo: 'Estudiante' | 'Docente' | 'Bibliotecario';
 }

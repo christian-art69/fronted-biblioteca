@@ -1,6 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// 1. Importa ReactiveFormsModule y FormControl
 import { ReactiveFormsModule, FormBuilder, Validators, FormGroup, FormControl } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { PrestamoService } from './prestamos.service';
@@ -14,7 +13,6 @@ import { LibroService } from '../libros/libros.service';
 @Component({
   selector: 'app-prestamos',
   standalone: true,
-  // 2. Añade ReactiveFormsModule
   imports: [CommonModule, HttpClientModule, ReactiveFormsModule],
   templateUrl: './prestamos.html',
   styleUrls: ['../panel-gestion.css']
@@ -65,13 +63,11 @@ export class Prestamos implements OnInit {
     const userId = this.authService.userId();
 
     if (userRole === 'Admin') {
-      // 3. Añade tipo 'any'
       this.prestamoService.getPrestamos().subscribe({
         next: (data: any) => this.prestamos = data,
         error: (err: any) => this.mensajeError = 'Error al cargar los préstamos.'
       });
     } else if (userRole === 'Usuario' && userId) {
-      // 4. Añade tipo 'any'
       this.prestamoService.getPrestamosPorUsuario(userId).subscribe({
         next: (data: any) => this.prestamos = data,
         error: (err: any) => this.mensajeError = 'Error al cargar tus préstamos.'
@@ -82,7 +78,6 @@ export class Prestamos implements OnInit {
   buscarUsuario(): void {
     const rut = this.filtroUsuario.value;
     if (!rut) return;
-    // 5. Añade tipo 'any'
     this.usuarioService.getUsuarioPorRut(rut).subscribe({
       next: (data: any) => {
         this.usuariosEncontrados = [data]; 
@@ -100,7 +95,6 @@ export class Prestamos implements OnInit {
   buscarLibro(): void {
     const titulo = this.filtroLibro.value;
     if (!titulo) return;
-    // 6. Añade tipo 'any'
     this.libroService.buscarLibrosPorTitulo(titulo).subscribe({
       next: (data: any) => this.librosEncontrados = data,
       error: (err: any) => this.librosEncontrados = []
@@ -134,8 +128,6 @@ export class Prestamos implements OnInit {
       libro: this.f['libroId'].value,
       fechaDevolucion: this.f['fechaDevolucion'].value
     };
-
-    // 7. Añade tipo 'any'
     this.prestamoService.addPrestamo(prestamoData).subscribe({
       next: () => {
         this.mensajeExito = 'Préstamo registrado exitosamente.';
@@ -156,7 +148,6 @@ export class Prestamos implements OnInit {
 
   devolverLibro(id: string): void {
     if (confirm('¿Confirmar la devolución de este libro?')) {
-      // 8. Añade tipo 'any'
       this.prestamoService.devolverPrestamo(id).subscribe({
         next: () => {
           this.mensajeExito = 'Libro devuelto exitosamente.';

@@ -10,7 +10,6 @@ import { AuthService } from '../services/auth.service';
   standalone: true,
   imports: [CommonModule, HttpClientModule],
   templateUrl: './historial.html',
-  // 1. Añade los estilos
   styleUrls: ['../panel-gestion.css']
 })
 export class Historial implements OnInit {
@@ -30,13 +29,11 @@ export class Historial implements OnInit {
     const userId = this.authService.userId();
 
     if (userRole === 'Admin') {
-      // 2. Añade tipo 'any'
       this.prestamoService.getHistorial().subscribe({
         next: (data: any) => this.historial = data,
         error: (err: any) => this.mensajeError = 'Error al cargar el historial.'
       });
     } else if (userRole === 'Usuario' && userId) {
-      // 3. Añade tipo 'any'
       this.prestamoService.getHistorialPorUsuario(userId).subscribe({
         next: (data: any) => this.historial = data,
         error: (err: any) => this.mensajeError = 'Error al cargar tu historial.'

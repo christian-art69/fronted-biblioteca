@@ -17,7 +17,6 @@
   margin: 0;
 }
 
-/* Estilos de la barra de navegación */
 .header nav {
   display: flex;
   gap: 1.5rem;
@@ -37,7 +36,6 @@
   color: var(--color-primario);
 }
 
-/* Estilo para el enlace activo */
 .header nav a.activo {
   color: var(--color-primario);
   border-bottom-color: var(--color-primario);
@@ -50,7 +48,6 @@
   color: #a71d2a;
 }
 
-/* Widget de información de usuario */
 .user-info-widget {
   display: flex;
   align-items: center;
@@ -82,7 +79,6 @@
   color: #fff;
 }
 
-/* Estilos dinámicos para la situación del usuario */
 [data-situacion="Vigente"] {
   background-color: var(--color-exito);
 }
@@ -94,15 +90,12 @@
   background-color: var(--color-primario);
 }
 
-
-/* Área de contenido principal */
 .main-content {
   padding: 2.5rem;
   max-width: 1600px;
   margin: 0 auto;
 }
 
-/* Estado de la conexión */
 .connection-status {
   text-align: center;
   padding: 0.5rem;

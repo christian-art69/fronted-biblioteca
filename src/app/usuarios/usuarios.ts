@@ -1,6 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
-// 1. Importa FormsModule y ReactiveFormsModule
 import { FormsModule, ReactiveFormsModule, FormBuilder, Validators, FormGroup } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { IUsuario } from '../interfaces/usuario.interfaces';
@@ -10,7 +9,6 @@ import { AuthService } from '../services/auth.service';
 @Component({
   selector: 'app-usuarios',
   standalone: true,
-  // 2. Añade FormsModule
   imports: [CommonModule, HttpClientModule, FormsModule, ReactiveFormsModule],
   templateUrl: './usuarios.html',
   styleUrls: ['../panel-gestion.css']
@@ -57,7 +55,6 @@ export class Usuarios implements OnInit {
   }
 
   cargarUsuarios(): void {
-    // 3. Añade tipo 'any' a 'data' y 'err'
     this.usuarioService.getUsuarios().subscribe({
       next: (data: any) => {
         this.usuarios = data;
@@ -125,7 +122,6 @@ export class Usuarios implements OnInit {
     }
 
     if (this.esModoEdicion && this.usuarioActualId) {
-      // 4. Añade tipo 'any' a 'err'
       this.usuarioService.updateUsuario(this.usuarioActualId, usuarioData).subscribe({
         next: () => {
           this.mensajeExito = 'Usuario actualizado correctamente.';
@@ -135,7 +131,6 @@ export class Usuarios implements OnInit {
         error: (err: any) => this.mensajeError = `Error al actualizar: ${err.error?.message || 'Verifique los datos.'}`
       });
     } else {
-      // 5. Añade tipo 'any' a 'err'
       this.authService.register(usuarioData).subscribe({
         next: () => {
           this.mensajeExito = 'Usuario registrado correctamente.';
@@ -149,7 +144,6 @@ export class Usuarios implements OnInit {
 
   eliminarUsuario(id: string): void {
     if (confirm('¿Está seguro de que desea eliminar este usuario?')) {
-      // 6. Añade tipo 'any' a 'err'
       this.usuarioService.deleteUsuario(id).subscribe({
         next: () => {
           this.mensajeExito = 'Usuario eliminado correctamente.';

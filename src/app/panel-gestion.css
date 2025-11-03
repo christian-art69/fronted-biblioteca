@@ -1,17 +1,16 @@
-/* Contenedor principal del panel */
 .gestion-container {
   display: flex;
   flex-direction: column;
   gap: 2rem;
 }
 
-/* Tarjeta principal (para tablas, formularios, etc.) */
+
 .card {
   background-color: var(--color-superficie);
   border-radius: var(--border-radius);
   box-shadow: var(--sombra-card);
   border: 1px solid var(--color-borde);
-  overflow: hidden; /* Para que la tabla no se salga */
+  overflow: hidden; 
 }
 
 .card-header {
@@ -38,7 +37,7 @@
   gap: 1.5rem;
 }
 
-/* Estilos de botones */
+
 .btn {
   padding: 0.65rem 1.25rem;
   font-size: 0.95rem;
@@ -91,7 +90,6 @@
   cursor: not-allowed;
 }
 
-/* Estilos de la tabla */
 .table-responsive {
   width: 100%;
   overflow-x: auto;
@@ -133,7 +131,6 @@
   font-size: 0.875rem;
 }
 
-/* Estilos de formulario (reusables para modales) */
 .form-group {
   margin-bottom: 1.25rem;
 }
@@ -174,11 +171,7 @@
   cursor: not-allowed;
 }
 
-.form-select {
-  composes: form-control; /* Hereda estilos de form-control */
-}
 
-/* Mensajes de error del formulario */
 .error-message {
   color: var(--color-error);
   font-size: 0.875rem;
@@ -203,7 +196,6 @@
   text-align: center;
 }
 
-/* Estilos del Modal */
 .modal-backdrop {
   position: fixed;
   top: 0;
@@ -255,7 +247,6 @@
   gap: 0.75rem;
 }
 
-/* Para la búsqueda y filtros */
 .filters-bar {
   display: flex;
   gap: 1rem;
