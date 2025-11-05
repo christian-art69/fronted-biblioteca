@@ -12,12 +12,21 @@ export class PrestamoService {
   private authService = inject(AuthService);
   private apiUrl = 'https://backend-biblioteca-kftz.onrender.com/api/prestamos';
   
-  getPrestamos(): Observable<IPrestamo[]> {
+  // MÉTODO PARA ADMIN: Obtiene TODOS los préstamos (llama a GET /api/prestamos)
+  getPrestamosAdmin(): Observable<IPrestamo[]> {
+    return this.http.get<IPrestamo[]>(this.apiUrl, {
+      headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }
+    });
+  }
+
+  // MÉTODO PARA USUARIO: Obtiene SÓLO los préstamos del usuario logueado
+  getMisPrestamos(): Observable<IPrestamo[]> {
     return this.http.get<IPrestamo[]>(`${this.apiUrl}/mis-prestamos`, {
       headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }
     });
   }
 
+  // (Este método ya no lo usa la lógica principal de carga)
   getPrestamosPorUsuario(usuarioId: string): Observable<IPrestamo[]> {
     return this.http.get<IPrestamo[]>(`${this.apiUrl}/usuario/${usuarioId}`, {
       headers: { 'Authorization': `Bearer ${this.authService.getToken()}` }
