@@ -6,7 +6,7 @@ export interface IPrestamo {
   usuario: IUsuario;
   libro: ILibro;
   fechaPrestamo: string | Date;
-  fechaDevolucion?: string | Date;
+  fechaDevolucionLimite?: string | Date; 
   createdAt?: string | Date;
   updatedAt?: string | Date;
   estado?: 'Prestado' | 'Devuelto';
@@ -16,5 +16,5 @@ export interface ICrearPrestamo {
   usuario: string;
   libro: string;
   fechaPrestamo: string | Date | null;
-  fechaDevolucion?: string | Date | null;
+  fechaDevolucion: string | Date | null; 
 }

@@ -97,12 +97,14 @@
               <td>{{ p.libro.titulo }}</td>
               <td>{{ p.libro.autor }}</td>
               <td>{{ p.fechaPrestamo | date: 'dd/MM/yyyy' }}</td>
-              <td>{{ p.fechaDevolucion | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ p.fechaDevolucionLimite | date: 'dd/MM/yyyy' }}</td>
               <td class="actions">
-                <button *ngIf="authService.role() === 'Admin'" class="btn btn-success" (click)="devolverLibro(p._id!)">
+                <button *ngIf="authService.role() === 'Admin' || authService.role() === 'Usuario'" 
+                        class="btn btn-success" 
+                        (click)="devolverLibro(p._id!)">
                   Registrar Devolución
                 </button>
-                <span *ngIf="authService.role() === 'Usuario'">-</span>
+                <span *ngIf="authService.role() !== 'Admin' && authService.role() !== 'Usuario'">-</span>
               </td>
             </tr>
             <tr *ngIf="prestamos.length === 0">
