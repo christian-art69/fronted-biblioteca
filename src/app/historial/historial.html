@@ -16,8 +16,9 @@
               <th>Libro</th>
               <th>Autor</th>
               <th>Fecha Préstamo</th>
-              <th>Fecha Devolución</th>
-              <th>Estado</th>
+              <th>Fecha Límite</th> 
+              <th>Fecha Devolución Real</th> 
+              <th>Estado Entrega</th>
             </tr>
           </thead>
           <tbody>
@@ -27,16 +28,17 @@
               <td>{{ h.libro.titulo }}</td>
               <td>{{ h.libro.autor }}</td>
               <td>{{ h.fechaPrestamo | date: 'dd/MM/yyyy' }}</td>
-              <td>{{ h.fechaDevolucion | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ h.fechaDevolucionLimite | date: 'dd/MM/yyyy' }}</td>
+              <td>{{ h.fechaDevolucionReal | date: 'dd/MM/yyyy' }}</td>
               <td>
                 <span class="user-status" 
-                      [style.background-color]="h.estado === 'Devuelto' ? 'var(--color-exito)' : 'var(--color-texto-secundario)'">
-                  {{ h.estado }}
+                      [style.background-color]="h.estadoEntrega === 'Atrasado' ? 'var(--color-error)' : 'var(--color-exito)'">
+                  {{ h.estadoEntrega }}
                 </span>
               </td>
             </tr>
             <tr *ngIf="historial.length === 0">
-              <td [attr.colspan]="authService.role() === 'Admin' ? 7 : 5" style="text-align: center;">
+              <td [attr.colspan]="authService.role() === 'Admin' ? 8 : 6" style="text-align: center;">
                 No hay registros en el historial.
               </td>
             </tr>
